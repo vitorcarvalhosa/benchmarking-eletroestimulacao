@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Benchmarking · Eletroestimulação EMS — Realser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #FF6009;
+      --teal: #3BD8C3;
+      --dark: #111111;
+      --gray: #666666;
+      --light: #F5F5F5;
+      --white: #FFFFFF;
+      --border: #E8E8E8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Open Sans', Arial, sans-serif;
+      background: var(--white);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background: var(--dark);
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      border-bottom: 3px solid var(--orange);
+    }
+
+    .logo-text {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 1.1rem;
+      color: var(--white);
+      letter-spacing: 0.04em;
+    }
+
+    .logo-text span { color: var(--orange); }
+
+    .badge-date {
+      font-size: 0.75rem;
+      color: #888;
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      background: linear-gradient(135deg, #111 0%, #1a1a1a 60%, #222 100%);
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(255,96,9,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: var(--orange);
+      color: var(--white);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.9rem;
+      border-radius: 2px;
+      margin-bottom: 1.4rem;
+    }
+
+    .hero h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--orange);
+    }
+
+    .hero p {
+      color: #aaa;
+      font-size: 1rem;
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat strong {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 2rem;
+      color: var(--orange);
+    }
+
+    .hero-stat span {
+      font-size: 0.78rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── LAYOUT ─── */
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    section { padding: 4rem 0; }
+
+    section:nth-child(even) { background: var(--light); }
+
+    .section-label {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-sub {
+      color: var(--gray);
+      font-size: 0.92rem;
+      margin-bottom: 2.5rem;
+      max-width: 600px;
+    }
+
+    /* ─── ADVERTISER GRID ─── */
+    .adv-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .adv-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.4rem;
+      position: relative;
+      transition: box-shadow 0.2s;
+    }
+
+    .adv-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.08); }
+
+    .adv-card .pill {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      font-family: 'Montserrat', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      margin-bottom: 0.8rem;
+    }
+
+    .pill-high { background: #fff3eb; color: var(--orange); }
+    .pill-med  { background: #e8faf8; color: #1faa9a; }
+    .pill-low  { background: #f5f5f5; color: #888; }
+
+    .adv-card h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .adv-card p {
+      font-size: 0.83rem;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+
+    /* ─── ANGLES ─── */
+    .angles-list { display: flex; flex-direction: column; gap: 1.5rem; }
+
+    .angle-card {
+      background: var(--white);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 6px 1fr;
+    }
+
+    .angle-card .bar { background: var(--orange); }
+    .angle-card.teal .bar { background: var(--teal); }
+    .angle-card.dark .bar { background: var(--dark); }
+
+    .angle-body { padding: 1.4rem 1.6rem; }
+
+    .angle-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.6rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .angle-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .sat-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      font-family: 'Montserrat', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.2rem 0.65rem;
+      border-radius: 20px;
+    }
+
+    .sat-high { background: #fde8e8; color: #c0392b; }
+    .sat-med  { background: #fff3cd; color: #856404; }
+    .sat-low  { background: #d4f5ef; color: #0a8575; }
+
+    .angle-quote {
+      background: var(--light);
+      border-left: 3px solid var(--orange);
+      padding: 0.7rem 1rem;
+      font-size: 0.85rem;
+      font-style: italic;
+      color: #444;
+      margin: 0.8rem 0;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .angle-card.teal .angle-quote { border-left-color: var(--teal); }
+    .angle-card.dark .angle-quote { border-left-color: var(--dark); }
+
+    .angle-insight {
+      font-size: 0.83rem;
+      color: var(--gray);
+    }
+
+    .angle-insight strong { color: var(--dark); }
+
+    /* ─── OPPORTUNITIES ─── */
+    .opp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .opp-card {
+      background: var(--dark);
+      border-radius: 12px;
+      padding: 1.6rem;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .opp-card::after {
+      content: attr(data-letter);
+      position: absolute;
+      right: -0.5rem;
+      bottom: -1rem;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 6rem;
+      color: rgba(255,255,255,0.04);
+      line-height: 1;
+    }
+
+    .opp-card h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--orange);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.8rem;
+    }
+
+    .opp-card .hook {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--white);
+      line-height: 1.4;
+      margin-bottom: 0.7rem;
+    }
+
+    .opp-card p {
+      font-size: 0.82rem;
+      color: #bbb;
+      line-height: 1.5;
+    }
+
+    .opp-card .cta-tag {
+      display: inline-block;
+      margin-top: 1rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: 'Montserrat', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--teal);
+      border: 1px solid var(--teal);
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+    }
+
+    /* ─── TABLE ─── */
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    th {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      text-align: left;
+      padding: 0.7rem 1rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--dark);
+      vertical-align: top;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--light); }
+
+    td strong { font-weight: 600; }
+
+    .dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 0.4rem;
+      vertical-align: middle;
+    }
+
+    .dot-orange { background: var(--orange); }
+    .dot-teal   { background: var(--teal); }
+    .dot-gray   { background: #ccc; }
+
+    /* ─── KEY INSIGHT ─── */
+    .insight-box {
+      background: linear-gradient(135deg, var(--orange) 0%, #e04e00 100%);
+      border-radius: 16px;
+      padding: 2.5rem;
+      color: var(--white);
+      text-align: center;
+    }
+
+    .insight-box h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(1.3rem, 3vw, 1.9rem);
+      margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .insight-box p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--dark);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    footer p {
+      font-size: 0.78rem;
+      color: #555;
+    }
+
+    footer strong { color: var(--orange); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 600px) {
+      .hero { padding: 3.5rem 1.25rem 3rem; }
+      .hero-stats { gap: 1.5rem; }
+      .angle-card { grid-template-columns: 4px 1fr; }
+      .opp-card { padding: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-text">REAL<span>SER</span> · Inteligência de Mercado</div>
+  <div class="badge-date">Abril 2026</div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Benchmarking de Criativos</div>
+  <h1>Eletroestimulação <em>EMS</em><br>no Meta Ads Brasil</h1>
+  <p>Análise dos criativos, anunciantes e ofertas ativos no mercado — base para desenvolver campanhas com diferencial competitivo.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>40+</strong><span>Anúncios analisados</span></div>
+    <div class="hero-stat"><strong>16</strong><span>Anunciantes mapeados</span></div>
+    <div class="hero-stat"><strong>6</strong><span>Ângulos de copy</span></div>
+    <div class="hero-stat"><strong>4</strong><span>Criativos recomendados</span></div>
+  </div>
+</div>
+
+<!-- ANUNCIANTES -->
+<section>
+  <div class="container">
+    <div class="section-label">Panorama</div>
+    <h2 class="section-title">Anunciantes ativos no mercado</h2>
+    <p class="section-sub">Competidores diretos e indiretos identificados no Meta Ads com criativos rodando nos últimos 30 a 90 dias.</p>
+
+    <div class="adv-grid">
+
+      <div class="adv-card">
+        <span class="pill pill-high">Alto volume</span>
+        <h3>Jet'z Studio Fitness</h3>
+        <p>4+ criativos ativos. Maior diversidade de copy do mercado. Ângulos: inclusão, lipedema, "é para você também". Forte presença em FB + IG.</p>
+      </div>
+
+      <div class="adv-card">
+        <span class="pill pill-high">Alto volume</span>
+        <h3>BAH Estúdio (RS)</h3>
+        <p>5+ criativos ativos. Melhor copy emocional do segmento. Tom regional gaúcho ("guria"). Foco em quem nunca se encaixou na academia.</p>
+      </div>
+
+      <div class="adv-card">
+        <span class="pill pill-med">Médio volume</span>
+        <h3>ShapeTech Studio EletroFuncional</h3>
+        <p>Posicionamento de multi-tecnologia (EMS + outros). Copy educacional e de resultado. "Futuro do treino" como narrativa.</p>
+      </div>
+
+      <div class="adv-card">
+        <span class="pill pill-med">Médio volume</span>
+        <h3>Ampére EMS — Araraquara</h3>
+        <p>Resultado em 8 semanas como oferta central. Messaging direto e funcional. 2 criativos rodando com a mesma copy.</p>
+      </div>
+
+      <div class="adv-card">
+        <span class="pill pill-med">Médio volume</span>
+        <h3>Em20 Eletroestimulação</h3>
+        <p>Foco no gasto calórico pós-treino (efeito EPOC). Copy técnica e educacional. Diferencial claro de mecanismo de ação.</p>
+      </div>
+
+      <div class="adv-card">
+        <span class="pill pill-med">Médio volume</span>
+        <h3>Ampère São Carlos</h3>
+        <p>Combina EMS + Pilates. Foco em bem-estar, alívio de dores e qualidade de vida. Público com perfil diferente do fitness puro.</p>
+      </div>
+
+      <div class="adv-card">
+        <span class="pill pill-low">Presença ativa</span>
+        <h3>PulseLab Leblon</h3>
+        <p>Posicionamento premium, público AB Rio. "20 min, resultados incríveis, acompanhamento profissional". Exclusividade como diferencial.</p>
+      </div>
+
+      <div class="adv-card">
+        <span class="pill pill-low">Presença ativa</span>
+        <h3>BVFit Wellness</h3>
+        <p>"Não é para todo mundo." Ambiente sofisticado, tecnologia mais avançada do mundo fitness. Nicho de alto ticket.</p>
+      </div>
+
+      <div class="adv-card">
+        <span class="pill pill-low">Presença ativa</span>
+        <h3>Clínica Uirtus</h3>
+        <p>Método Eletro Ellite: 2 treinos por semana, 30 min. Baixa frequência como argumento de venda. Hipertrofia + emagrecimento.</p>
+      </div>
+
+      <div class="adv-card">
+        <span class="pill pill-low">Presença ativa</span>
+        <h3>Estética Cuidare / Ale Barros</h3>
+        <p>Equipamento EZBODY: "40x mais contração". Foco estético — definição, redução de gordura. Público feminino, anti-flacidez.</p>
+      </div>
+
+      <div class="adv-card">
+        <span class="pill pill-low">Presença ativa</span>
+        <h3>Body Lounge by Claudia Fachin</h3>
+        <p>Copy consultiva/informativa. Explica o colete EMS, os 3 pilares (tecnologia, acompanhamento, resultado). Tom educativo.</p>
+      </div>
+
+      <div class="adv-card">
+        <span class="pill pill-low">Presença ativa</span>
+        <h3>Tecfit Brasil</h3>
+        <p>Franquia nacional de EMS. Benchmark de escala e padronização. Referência para o que funciona em múltiplas praças.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ÂNGULOS DE COPY -->
+<section>
+  <div class="container">
+    <div class="section-label">Análise de Copy</div>
+    <h2 class="section-title">Ângulos dominantes no mercado</h2>
+    <p class="section-sub">Os 6 principais ângulos identificados — com nível de saturação e recomendação estratégica para a Realser.</p>
+
+    <div class="angles-list">
+
+      <div class="angle-card">
+        <div class="bar"></div>
+        <div class="angle-body">
+          <div class="angle-header">
+            <div class="angle-title">⏱ O argumento do tempo</div>
+            <span class="sat-tag sat-high">Saturação altíssima</span>
+          </div>
+          <div class="angle-quote">"20 minutos = 2 horas de academia" · "Sem tempo para a academia, mas quer emagrecer?"</div>
+          <p class="angle-insight"><strong>Presente em:</strong> ShapeTech, Imperium, Studio Pulsar, Studio Pro Pulse, PulseLab, Jet'z e mais. <strong>Recomendação:</strong> Evitar como gancho principal. O mercado inteiro compete nesse ângulo — entrar por outro lado e usar o tempo como <em>reforço</em>, não como abertura.</p>
+        </div>
+      </div>
+
+      <div class="angle-card teal">
+        <div class="bar"></div>
+        <div class="angle-body">
+          <div class="angle-header">
+            <div class="angle-title">💛 Anti-academia / "o problema não era você"</div>
+            <span class="sat-tag sat-med">Saturação média</span>
+          </div>
+          <div class="angle-quote">"Se você nunca se encaixou em academias convencionais… a verdade é que o problema não é você. É o método!"</div>
+          <p class="angle-insight"><strong>Presente em:</strong> BAH Estúdio (mais desenvolvido), Jet'z. <strong>Recomendação:</strong> <strong>Alto potencial para a Realser.</strong> Copy altamente identificadora com o público feminino 25–55 que desistiu de academia. Gera reconhecimento imediato.</p>
+        </div>
+      </div>
+
+      <div class="angle-card">
+        <div class="bar"></div>
+        <div class="angle-body">
+          <div class="angle-header">
+            <div class="angle-title">🔬 Ciência / mecanismo de ação</div>
+            <span class="sat-tag sat-med">Saturação média</span>
+          </div>
+          <div class="angle-quote">"O gasto calórico do EMS não acontece só durante a sessão. O principal impacto vem depois, quando o corpo entra em processo de recuperação..."</div>
+          <p class="angle-insight"><strong>Presente em:</strong> Em20, Wiemspro, Estética Cuidare, ShapeTech. <strong>Recomendação:</strong> Excelente para retargeting — audiência quente já sabe o que é EMS e precisa do "porquê funciona". Também funciona como gancho de curiosidade para público frio.</p>
+        </div>
+      </div>
+
+      <div class="angle-card teal">
+        <div class="bar"></div>
+        <div class="angle-body">
+          <div class="angle-header">
+            <div class="angle-title">🦵 Nicho de dor — lipedema e articulações</div>
+            <span class="sat-tag sat-low">Saturação baixa — oportunidade</span>
+          </div>
+          <div class="angle-quote">"Lipedema &amp; EMS: uma nova aliada no tratamento. Ativa a circulação e a drenagem linfática. Reduz o inchaço e a retenção de líquidos."</div>
+          <p class="angle-insight"><strong>Presente em:</strong> Jet'z (lipedema), Ampère São Carlos (dores). <strong>Recomendação:</strong> <strong>Maior oportunidade identificada.</strong> Alta demanda reprimida, CPL potencialmente baixo por ser nicho específico. Alinha EMS com necessidade real de saúde — não só estética.</p>
+        </div>
+      </div>
+
+      <div class="angle-card dark">
+        <div class="bar"></div>
+        <div class="angle-body">
+          <div class="angle-header">
+            <div class="angle-title">💎 Exclusividade / premium</div>
+            <span class="sat-tag sat-low">Saturação baixa</span>
+          </div>
+          <div class="angle-quote">"A BVFit não é para todo mundo. É para você, que busca um atendimento exclusivo, um ambiente sofisticado e a tecnologia mais avançada do mundo fitness."</div>
+          <p class="angle-insight"><strong>Presente em:</strong> BVFit, PulseLab. <strong>Recomendação:</strong> Funciona bem para público A/B. A Realser pode explorar esse ângulo com a combinação "avaliação personalizada gratuita + equipe especializada + tecnologia i-Motion" como elementos de premium local.</p>
+        </div>
+      </div>
+
+      <div class="angle-card">
+        <div class="bar"></div>
+        <div class="angle-body">
+          <div class="angle-header">
+            <div class="angle-title">✅ Inclusão / "é para você também"</div>
+            <span class="sat-tag sat-med">Saturação média</span>
+          </div>
+          <div class="angle-quote">"Eletroestimulação é para VOCÊ! Sabe aquela desculpa de que 'esse treino não é pra mim'? Pode esquecer."</div>
+          <p class="angle-insight"><strong>Presente em:</strong> Jet'z, BAH Estúdio. <strong>Recomendação:</strong> Ângulo emocional com alto potencial de identificação. Ideal para quebrar objeção de quem acha que EMS "não é para mim". Funciona bem como vídeo curto com depoimento.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- OFERTAS -->
+<section>
+  <div class="container">
+    <div class="section-label">Estrutura de Ofertas</div>
+    <h2 class="section-title">Como o mercado estrutura suas ofertas</h2>
+    <p class="section-sub">Padrões de CTA, formato de proposta de valor e uso de preço nos criativos analisados.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo de oferta</th>
+            <th>Frequência no mercado</th>
+            <th>Exemplo identificado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="dot dot-orange"></span><strong>Sessão experimental / avaliação grátis</strong></td>
+            <td><span class="dot dot-orange"></span>Alta — padrão do segmento</td>
+            <td>"Agende sua primeira sessão agora"</td>
+          </tr>
+          <tr>
+            <td><span class="dot dot-orange"></span><strong>Resultado com prazo definido</strong></td>
+            <td><span class="dot dot-orange"></span>Média — usado por Ampére, Uirtus</td>
+            <td>"Conquiste mudanças reais em até 8 semanas"</td>
+          </tr>
+          <tr>
+            <td><span class="dot dot-teal"></span><strong>Combo de tecnologias</strong></td>
+            <td><span class="dot dot-teal"></span>Média — ShapeTech, Ampère SP, House Slim</td>
+            <td>EMS + Pilates, EMS + Infravermelho + Vácuo</td>
+          </tr>
+          <tr>
+            <td><span class="dot dot-teal"></span><strong>Baixa frequência como benefício</strong></td>
+            <td><span class="dot dot-teal"></span>Baixa — Clínica Uirtus</td>
+            <td>"Só 2x por semana de 30 minutos"</td>
+          </tr>
+          <tr>
+            <td><span class="dot dot-gray"></span><strong>Preço visível no criativo</strong></td>
+            <td><span class="dot dot-gray"></span>Muito rara — quase inexistente</td>
+            <td>Mercado evita preço nos criativos de topo</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- OPORTUNIDADES -->
+<section>
+  <div class="container">
+    <div class="section-label">Recomendações</div>
+    <h2 class="section-title">4 criativos para testar em Indaiatuba</h2>
+    <p class="section-sub">Baseados nos gaps identificados na análise. Cada criativo parte de um ângulo diferente para testar qual ressoa melhor com a audiência local.</p>
+
+    <div class="opp-grid">
+
+      <div class="opp-card" data-letter="A">
+        <h3>Criativo A · Anti-academia</h3>
+        <div class="hook">"Se você já desistiu de academia… talvez nunca tenha encontrado o método certo."</div>
+        <p>Body: explica que 20 min de EMS ativa mais que 2h convencional. Sem impacto, sem desculpa de cansaço pós-trabalho.</p>
+        <span class="cta-tag">CTA: Avaliação grátis</span>
+      </div>
+
+      <div class="opp-card" data-letter="B">
+        <h3>Criativo B · Nicho lipedema</h3>
+        <div class="hook">"Você tem lipedema ou dores nos joelhos e quer se exercitar sem agravar?"</div>
+        <p>Body: EMS sem impacto articular, protege as articulações, melhora circulação linfática. Validado por fisioterapeutas.</p>
+        <span class="cta-tag">CTA: Avaliação com especialista</span>
+      </div>
+
+      <div class="opp-card" data-letter="C">
+        <h3>Criativo C · Científico / EPOC</h3>
+        <div class="hook">"Você sabia que a queima do EMS continua DEPOIS do treino?"</div>
+        <p>Body: explica efeito EPOC, recuperação muscular ativa, metabolismo elevado por horas. Gancho de curiosidade para topo.</p>
+        <span class="cta-tag">CTA: Experimente na prática</span>
+      </div>
+
+      <div class="opp-card" data-letter="D">
+        <h3>Criativo D · Exclusividade local</h3>
+        <div class="hook">"Em Indaiatuba, a tecnologia que atletas de elite usam agora está ao seu alcance."</div>
+        <p>Body: i-Motion EMS, método validado internacionalmente, equipe especializada. Vagas limitadas para avaliação.</p>
+        <span class="cta-tag">CTA: Vagas limitadas</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONCORRENTES A MONITORAR -->
+<section>
+  <div class="container">
+    <div class="section-label">Monitoramento</div>
+    <h2 class="section-title">Concorrentes prioritários para acompanhar</h2>
+    <p class="section-sub">Páginas que apresentam copy mais desenvolvida ou volume de teste relevante — vale observar evolução dos criativos.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Anunciante</th>
+            <th>Motivo para monitorar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Jet'z Studio Fitness</strong></td>
+            <td>Maior volume de criativos, copy mais testada e variada do segmento</td>
+          </tr>
+          <tr>
+            <td><strong>BAH Estúdio</strong></td>
+            <td>Melhor copy emocional do mercado EMS — referência de tom e identificação</td>
+          </tr>
+          <tr>
+            <td><strong>Em20 Eletroestimulação</strong></td>
+            <td>Educação científica como diferencial — único a explorar mecanismo EPOC</td>
+          </tr>
+          <tr>
+            <td><strong>Ampére EMS — Araraquara</strong></td>
+            <td>Mesmo segmento regional interior SP, messaging de resultado com prazo</td>
+          </tr>
+          <tr>
+            <td><strong>Tecfit Brasil</strong></td>
+            <td>Franquia nacional — benchmark de escala, o que funciona em múltiplas praças</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- KEY INSIGHT -->
+<section style="background: var(--white); padding: 3rem 0;">
+  <div class="container">
+    <div class="insight-box">
+      <h2>O maior insight desta análise</h2>
+      <p>O mercado inteiro compete no mesmo ângulo de tempo — "20 minutos valem por 2 horas". Qualquer criativo que <strong>não comece com essa promessa</strong> já se diferencia no feed antes mesmo do primeiro segundo. A oportunidade está em entrar pela dor, pela identidade ou pela curiosidade científica.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>Análise de inteligência de mercado — <strong>Realser · Indaiatuba</strong> · Meta Ad Library via Apify · Abril 2026<br>
+  Dados coletados em 09/04/2026. Criativos ativos sujeitos a alteração.</p>
+</footer>
+
+</body>
+</html>
