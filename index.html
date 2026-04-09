@@ -1,642 +1,546 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Benchmarking · Eletroestimulação EMS — Realser</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --orange: #FF6009;
-      --teal: #3BD8C3;
-      --dark: #111111;
-      --gray: #666666;
-      --light: #F5F5F5;
-      --white: #FFFFFF;
-      --border: #E8E8E8;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Open Sans', Arial, sans-serif;
-      background: var(--white);
-      color: var(--dark);
-      line-height: 1.6;
-    }
-
-    /* ─── HEADER ─── */
-    header {
-      background: var(--dark);
-      padding: 0 2rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 60px;
-      border-bottom: 3px solid var(--orange);
-    }
-
-    .logo-text {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      font-size: 1.1rem;
-      color: var(--white);
-      letter-spacing: 0.04em;
-    }
-
-    .logo-text span { color: var(--orange); }
-
-    .badge-date {
-      font-size: 0.75rem;
-      color: #888;
-      font-family: 'Open Sans', sans-serif;
-    }
-
-    /* ─── HERO ─── */
-    .hero {
-      background: linear-gradient(135deg, #111 0%, #1a1a1a 60%, #222 100%);
-      padding: 5rem 2rem 4rem;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -80px; left: 50%;
-      transform: translateX(-50%);
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(255,96,9,0.15) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .hero-tag {
-      display: inline-block;
-      background: var(--orange);
-      color: var(--white);
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0.3rem 0.9rem;
-      border-radius: 2px;
-      margin-bottom: 1.4rem;
-    }
-
-    .hero h1 {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      font-size: clamp(2rem, 5vw, 3.4rem);
-      color: var(--white);
-      line-height: 1.15;
-      margin-bottom: 1rem;
-    }
-
-    .hero h1 em {
-      font-style: normal;
-      color: var(--orange);
-    }
-
-    .hero p {
-      color: #aaa;
-      font-size: 1rem;
-      max-width: 560px;
-      margin: 0 auto 2.5rem;
-    }
-
-    .hero-stats {
-      display: flex;
-      justify-content: center;
-      gap: 2.5rem;
-      flex-wrap: wrap;
-    }
-
-    .hero-stat {
-      text-align: center;
-    }
-
-    .hero-stat strong {
-      display: block;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      font-size: 2rem;
-      color: var(--orange);
-    }
-
-    .hero-stat span {
-      font-size: 0.78rem;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-
-    /* ─── LAYOUT ─── */
-    .container {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-    }
-
-    section { padding: 4rem 0; }
-
-    section:nth-child(even) { background: var(--light); }
-
-    .section-label {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 0.7rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--orange);
-      margin-bottom: 0.5rem;
-    }
-
-    .section-title {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      font-size: clamp(1.5rem, 3vw, 2rem);
-      color: var(--dark);
-      margin-bottom: 0.5rem;
-    }
-
-    .section-sub {
-      color: var(--gray);
-      font-size: 0.92rem;
-      margin-bottom: 2.5rem;
-      max-width: 600px;
-    }
-
-    /* ─── ADVERTISER GRID ─── */
-    .adv-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.25rem;
-    }
-
-    .adv-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.4rem;
-      position: relative;
-      transition: box-shadow 0.2s;
-    }
-
-    .adv-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.08); }
-
-    .adv-card .pill {
-      display: inline-block;
-      font-size: 0.65rem;
-      font-weight: 700;
-      font-family: 'Montserrat', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      padding: 0.2rem 0.6rem;
-      border-radius: 20px;
-      margin-bottom: 0.8rem;
-    }
-
-    .pill-high { background: #fff3eb; color: var(--orange); }
-    .pill-med  { background: #e8faf8; color: #1faa9a; }
-    .pill-low  { background: #f5f5f5; color: #888; }
-
-    .adv-card h3 {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 0.95rem;
-      margin-bottom: 0.4rem;
-    }
-
-    .adv-card p {
-      font-size: 0.83rem;
-      color: var(--gray);
-      line-height: 1.5;
-    }
-
-    /* ─── ANGLES ─── */
-    .angles-list { display: flex; flex-direction: column; gap: 1.5rem; }
-
-    .angle-card {
-      background: var(--white);
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      overflow: hidden;
-      display: grid;
-      grid-template-columns: 6px 1fr;
-    }
-
-    .angle-card .bar { background: var(--orange); }
-    .angle-card.teal .bar { background: var(--teal); }
-    .angle-card.dark .bar { background: var(--dark); }
-
-    .angle-body { padding: 1.4rem 1.6rem; }
-
-    .angle-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 0.6rem;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .angle-title {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-    }
-
-    .sat-tag {
-      font-size: 0.68rem;
-      font-weight: 700;
-      font-family: 'Montserrat', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      padding: 0.2rem 0.65rem;
-      border-radius: 20px;
-    }
-
-    .sat-high { background: #fde8e8; color: #c0392b; }
-    .sat-med  { background: #fff3cd; color: #856404; }
-    .sat-low  { background: #d4f5ef; color: #0a8575; }
-
-    .angle-quote {
-      background: var(--light);
-      border-left: 3px solid var(--orange);
-      padding: 0.7rem 1rem;
-      font-size: 0.85rem;
-      font-style: italic;
-      color: #444;
-      margin: 0.8rem 0;
-      border-radius: 0 6px 6px 0;
-    }
-
-    .angle-card.teal .angle-quote { border-left-color: var(--teal); }
-    .angle-card.dark .angle-quote { border-left-color: var(--dark); }
-
-    .angle-insight {
-      font-size: 0.83rem;
-      color: var(--gray);
-    }
-
-    .angle-insight strong { color: var(--dark); }
-
-    /* ─── OPPORTUNITIES ─── */
-    .opp-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 1.25rem;
-    }
-
-    .opp-card {
-      background: var(--dark);
-      border-radius: 12px;
-      padding: 1.6rem;
-      color: var(--white);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .opp-card::after {
-      content: attr(data-letter);
-      position: absolute;
-      right: -0.5rem;
-      bottom: -1rem;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      font-size: 6rem;
-      color: rgba(255,255,255,0.04);
-      line-height: 1;
-    }
-
-    .opp-card h3 {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 0.85rem;
-      color: var(--orange);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 0.8rem;
-    }
-
-    .opp-card .hook {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-      color: var(--white);
-      line-height: 1.4;
-      margin-bottom: 0.7rem;
-    }
-
-    .opp-card p {
-      font-size: 0.82rem;
-      color: #bbb;
-      line-height: 1.5;
-    }
-
-    .opp-card .cta-tag {
-      display: inline-block;
-      margin-top: 1rem;
-      font-size: 0.72rem;
-      font-weight: 700;
-      font-family: 'Montserrat', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--teal);
-      border: 1px solid var(--teal);
-      padding: 0.3rem 0.7rem;
-      border-radius: 4px;
-    }
-
-    /* ─── TABLE ─── */
-    .table-wrap { overflow-x: auto; }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.875rem;
-    }
-
-    th {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #888;
-      text-align: left;
-      padding: 0.7rem 1rem;
-      border-bottom: 2px solid var(--border);
-    }
-
-    td {
-      padding: 0.85rem 1rem;
-      border-bottom: 1px solid var(--border);
-      color: var(--dark);
-      vertical-align: top;
-    }
-
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: var(--light); }
-
-    td strong { font-weight: 600; }
-
-    .dot {
-      display: inline-block;
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      margin-right: 0.4rem;
-      vertical-align: middle;
-    }
-
-    .dot-orange { background: var(--orange); }
-    .dot-teal   { background: var(--teal); }
-    .dot-gray   { background: #ccc; }
-
-    /* ─── KEY INSIGHT ─── */
-    .insight-box {
-      background: linear-gradient(135deg, var(--orange) 0%, #e04e00 100%);
-      border-radius: 16px;
-      padding: 2.5rem;
-      color: var(--white);
-      text-align: center;
-    }
-
-    .insight-box h2 {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      font-size: clamp(1.3rem, 3vw, 1.9rem);
-      margin-bottom: 1rem;
-      line-height: 1.3;
-    }
-
-    .insight-box p {
-      font-size: 0.95rem;
-      opacity: 0.9;
-      max-width: 600px;
-      margin: 0 auto;
-      line-height: 1.7;
-    }
-
-    /* ─── FOOTER ─── */
-    footer {
-      background: var(--dark);
-      padding: 2rem;
-      text-align: center;
-    }
-
-    footer p {
-      font-size: 0.78rem;
-      color: #555;
-    }
-
-    footer strong { color: var(--orange); }
-
-    /* ─── RESPONSIVE ─── */
-    @media (max-width: 600px) {
-      .hero { padding: 3.5rem 1.25rem 3rem; }
-      .hero-stats { gap: 1.5rem; }
-      .angle-card { grid-template-columns: 4px 1fr; }
-      .opp-card { padding: 1.3rem; }
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Benchmarking · Eletroestimulação EMS — Realser</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--orange:#FF6009;--teal:#3BD8C3;--dark:#111;--gray:#666;--light:#F5F5F5;--white:#fff;--border:#E8E8E8}
+html{scroll-behavior:smooth}
+body{font-family:'Open Sans',Arial,sans-serif;background:var(--white);color:var(--dark);line-height:1.6}
+header{background:var(--dark);padding:0 2rem;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;height:60px;border-bottom:3px solid var(--orange)}
+.logo-text{font-family:'Montserrat',sans-serif;font-weight:900;font-size:1.1rem;color:var(--white);letter-spacing:.04em}
+.logo-text span{color:var(--orange)}
+.badge-date{font-size:.75rem;color:#888}
+.hero{background:linear-gradient(135deg,#111 0%,#1a1a1a 60%,#222 100%);padding:5rem 2rem 4rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(255,96,9,.15) 0%,transparent 70%);pointer-events:none}
+.hero-tag{display:inline-block;background:var(--orange);color:var(--white);font-family:'Montserrat',sans-serif;font-weight:700;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;padding:.3rem .9rem;border-radius:2px;margin-bottom:1.4rem}
+.hero h1{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(2rem,5vw,3.4rem);color:var(--white);line-height:1.15;margin-bottom:1rem}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.hero p{color:#aaa;font-size:1rem;max-width:560px;margin:0 auto 2.5rem}
+.hero-stats{display:flex;justify-content:center;gap:2.5rem;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat strong{display:block;font-family:'Montserrat',sans-serif;font-weight:900;font-size:2rem;color:var(--orange)}
+.hero-stat span{font-size:.78rem;color:#888;text-transform:uppercase;letter-spacing:.06em}
+.container{max-width:1080px;margin:0 auto;padding:0 1.5rem}
+section{padding:4rem 0}
+section:nth-child(even){background:var(--light)}
+.section-label{font-family:'Montserrat',sans-serif;font-weight:700;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:.5rem}
+.section-title{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(1.5rem,3vw,2rem);color:var(--dark);margin-bottom:.5rem}
+.section-sub{color:var(--gray);font-size:.92rem;margin-bottom:2.5rem;max-width:600px}
+
+/* CREATIVES GRID */
+.creatives-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
+.ad-card{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .2s}
+.ad-card:hover{box-shadow:0 8px 28px rgba(0,0,0,.09)}
+.ad-media{position:relative;background:#000;aspect-ratio:9/16;max-height:460px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.ad-media video,.ad-media img{width:100%;height:100%;object-fit:cover;display:block}
+.ad-info{padding:1rem 1.1rem 1.2rem;display:flex;flex-direction:column;gap:.7rem;flex:1}
+.ad-header{display:flex;align-items:center;gap:.7rem}
+.avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;background:var(--light)}
+.avatar-ph{width:36px;height:36px;border-radius:50%;background:var(--light);flex-shrink:0}
+.ad-page-meta{flex:1;min-width:0}
+.page-name{font-family:'Montserrat',sans-serif;font-weight:700;font-size:.85rem;color:var(--dark);text-decoration:none;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.page-name:hover{color:var(--orange)}
+.ad-sub{display:flex;gap:.5rem;margin-top:.15rem}
+.ad-sub span{font-size:.68rem;color:#999;background:var(--light);padding:.15rem .45rem;border-radius:3px}
+.lib-btn{font-size:.68rem;font-family:'Montserrat',sans-serif;font-weight:700;color:var(--orange);border:1px solid var(--orange);padding:.25rem .55rem;border-radius:4px;text-decoration:none;white-space:nowrap;flex-shrink:0}
+.lib-btn:hover{background:var(--orange);color:var(--white)}
+.ad-body{font-size:.8rem;color:#444;line-height:1.55;white-space:pre-line;max-height:160px;overflow:hidden;position:relative}
+.ad-body::after{content:'';position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(transparent,var(--white))}
+
+/* ANALYSIS SECTIONS */
+.adv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem}
+.adv-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:1.4rem;transition:box-shadow .2s}
+.adv-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.08)}
+.pill{display:inline-block;font-size:.65rem;font-weight:700;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .6rem;border-radius:20px;margin-bottom:.8rem}
+.pill-high{background:#fff3eb;color:var(--orange)}
+.pill-med{background:#e8faf8;color:#1faa9a}
+.pill-low{background:#f5f5f5;color:#888}
+.adv-card h3{font-family:'Montserrat',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:.4rem}
+.adv-card p{font-size:.83rem;color:var(--gray);line-height:1.5}
+.angles-list{display:flex;flex-direction:column;gap:1.5rem}
+.angle-card{background:var(--white);border-radius:12px;border:1px solid var(--border);overflow:hidden;display:grid;grid-template-columns:6px 1fr}
+.angle-card .bar{background:var(--orange)}
+.angle-card.teal .bar{background:var(--teal)}
+.angle-card.dark .bar{background:var(--dark)}
+.angle-body{padding:1.4rem 1.6rem}
+.angle-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;flex-wrap:wrap;gap:.5rem}
+.angle-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:1rem}
+.sat-tag{font-size:.68rem;font-weight:700;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.06em;padding:.2rem .65rem;border-radius:20px}
+.sat-high{background:#fde8e8;color:#c0392b}
+.sat-med{background:#fff3cd;color:#856404}
+.sat-low{background:#d4f5ef;color:#0a8575}
+.angle-quote{background:var(--light);border-left:3px solid var(--orange);padding:.7rem 1rem;font-size:.85rem;font-style:italic;color:#444;margin:.8rem 0;border-radius:0 6px 6px 0}
+.angle-card.teal .angle-quote{border-left-color:var(--teal)}
+.angle-card.dark .angle-quote{border-left-color:var(--dark)}
+.angle-insight{font-size:.83rem;color:var(--gray)}
+.angle-insight strong{color:var(--dark)}
+.opp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.25rem}
+.opp-card{background:var(--dark);border-radius:12px;padding:1.6rem;color:var(--white);position:relative;overflow:hidden}
+.opp-card::after{content:attr(data-letter);position:absolute;right:-.5rem;bottom:-1rem;font-family:'Montserrat',sans-serif;font-weight:900;font-size:6rem;color:rgba(255,255,255,.04);line-height:1}
+.opp-card h3{font-family:'Montserrat',sans-serif;font-weight:700;font-size:.85rem;color:var(--orange);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.8rem}
+.opp-card .hook{font-family:'Montserrat',sans-serif;font-weight:700;font-size:1rem;color:var(--white);line-height:1.4;margin-bottom:.7rem}
+.opp-card p{font-size:.82rem;color:#bbb;line-height:1.5}
+.opp-card .cta-tag{display:inline-block;margin-top:1rem;font-size:.72rem;font-weight:700;font-family:'Montserrat',sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);border:1px solid var(--teal);padding:.3rem .7rem;border-radius:4px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.875rem}
+th{font-family:'Montserrat',sans-serif;font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:#888;text-align:left;padding:.7rem 1rem;border-bottom:2px solid var(--border)}
+td{padding:.85rem 1rem;border-bottom:1px solid var(--border);color:var(--dark);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--light)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:.4rem;vertical-align:middle}
+.dot-orange{background:var(--orange)}
+.dot-teal{background:var(--teal)}
+.dot-gray{background:#ccc}
+.insight-box{background:linear-gradient(135deg,var(--orange) 0%,#e04e00 100%);border-radius:16px;padding:2.5rem;color:var(--white);text-align:center}
+.insight-box h2{font-family:'Montserrat',sans-serif;font-weight:900;font-size:clamp(1.3rem,3vw,1.9rem);margin-bottom:1rem;line-height:1.3}
+.insight-box p{font-size:.95rem;opacity:.9;max-width:600px;margin:0 auto;line-height:1.7}
+footer{background:var(--dark);padding:2rem;text-align:center}
+footer p{font-size:.78rem;color:#555}
+footer strong{color:var(--orange)}
+@media(max-width:600px){
+  .hero{padding:3.5rem 1.25rem 3rem}
+  .hero-stats{gap:1.5rem}
+  .angle-card{grid-template-columns:4px 1fr}
+  .opp-card{padding:1.3rem}
+  .creatives-grid{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
   <div class="logo-text">REAL<span>SER</span> · Inteligência de Mercado</div>
   <div class="badge-date">Abril 2026</div>
 </header>
 
-<!-- HERO -->
 <div class="hero">
   <div class="hero-tag">Benchmarking de Criativos</div>
   <h1>Eletroestimulação <em>EMS</em><br>no Meta Ads Brasil</h1>
   <p>Análise dos criativos, anunciantes e ofertas ativos no mercado — base para desenvolver campanhas com diferencial competitivo.</p>
   <div class="hero-stats">
-    <div class="hero-stat"><strong>40+</strong><span>Anúncios analisados</span></div>
+    <div class="hero-stat"><strong>37</strong><span>Criativos capturados</span></div>
     <div class="hero-stat"><strong>16</strong><span>Anunciantes mapeados</span></div>
     <div class="hero-stat"><strong>6</strong><span>Ângulos de copy</span></div>
-    <div class="hero-stat"><strong>4</strong><span>Criativos recomendados</span></div>
+    <div class="hero-stat"><strong>4</strong><span>Oportunidades identificadas</span></div>
   </div>
 </div>
+
+<!-- CRIATIVOS -->
+<section>
+  <div class="container">
+    <div class="section-label">Criativos Capturados</div>
+    <h2 class="section-title">Anúncios ativos no Meta Ads</h2>
+    <p class="section-sub">Todos os criativos coletados diretamente do Meta Ad Library. Vídeos e imagens na íntegra, com copy original e link para o anúncio.</p>
+    <div class="creatives-grid">
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-ord5-3.xx.fbcdn.net/v/t39.35426-6/497655550_1647913012595720_3877530707948951854_n.jpg?_nc_cat=107&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=yThyeZI31zAQ7kNvwFo-EWI&amp;_nc_oc=AdpXCSim5F92DC4ByMKy4geM8Md08dN45L3oTP8ssA9-RSeZQr80bMIGTIym8Wp_wHg&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-3.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af19L5jzbqjZzD5rdHd5By7AKvHHetGnnqhovNA547Fo7g&amp;oe=69DDAD87" controls preload="none"><source src="https://video-ord5-3.xx.fbcdn.net/v/t42.1790-2/497707116_555948047273429_1019221781639823075_n.mp4?_nc_cat=109&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=d9i0X_YzxnQQ7kNvwFgt-c_&amp;_nc_oc=AdpWXfaT-PBVF-KiC07Xuhg2ILd5fFIFoPak3eQstRo1102NY0hn1YOmVVAmumxHYe8&amp;_nc_zt=28&amp;_nc_ht=video-ord5-3.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af1250nbmDZoz_aj-UIpJVPkRx7dceje8N27hzdvX1zNTg&amp;oe=69DDD757" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-ord5-3.xx.fbcdn.net/v/t39.35426-6/497633568_597946566640346_875450966849885781_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=100&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=fnXuNttcYzAQ7kNvwHc5XRv&amp;_nc_oc=Adp0Cowk5Nahs9arZl7vVMbiq8cAbgOhwQ-g5VPQExwJuHc5fhVqGLFklBCeiUq8Odo&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-3.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af2eClhMvuOiHP3a1slGud15sRlfy8JCKzmGmECcz-XGfQ&amp;oe=69DDD235" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/wiemsprobrasil/" target="_blank" rel="noopener" class="page-name">Wiemspro Brasil</a><div class="ad-sub"><span>IG</span><span>desde Jun/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=1097274988910888" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">A eletroestimulação pode ser o diferencial que faltava no seu método! 
+
+Desde que usada com inteligência, técnica e propósito.
+Quando existe intenção por trás de cada estímulo, o treino deixa de ser só físico e vira uma verdadeira ferramenta de transformação.
+
+Mais do que tecnologia, é METODOLOGIA🚀
+Aqui na Wiemspro, a eletroestimulação de corpo inteiro é pensada para potencializar o trabalho dos profissionais a um outro patamar!
+
+Já imaginou levar essa potência para seus alunos?
+
+#personal #personaltrainer #workout #ems #eletroestimulaçãomuscular #wbemstraining</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-ord5-1.xx.fbcdn.net/v/t39.35426-6/531376103_1792573168321013_4466058552513614110_n.jpg?_nc_cat=108&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=u6USlFkRWqAQ7kNvwGx83eM&amp;_nc_oc=AdqOhWXifUqPapv_Fti4HbAa26Y7QRx4N1VL7P_pNMIBbH_21nMf7VM-4ejf4kBXD44&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-1.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af11D5FM-2M6Cr2lAgI8ORck25fQzfuE9q7NGU0EMlMYtA&amp;oe=69DDAE0C" controls preload="none"><source src="https://video-ord5-2.xx.fbcdn.net/o1/v/t2/f2/m86/AQNLhp10ETiY0NOp2OsKpcXk-0phwaHyGd6umYdKN91FrtXICMXIDEzggu3E2TCdj8GCSMCE4sMqaY08mYoJJ5Egrug1E2VmPiR7-C4.mp4?_nc_cat=105&amp;_nc_sid=5e9851&amp;_nc_ht=video-ord5-2.xx.fbcdn.net&amp;_nc_ohc=5bT96gqz2csQ7kNvwEG9Hfc&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLmRhc2hfYmFzZWxpbmVfM192MSIsInhwdl9hc3NldF9pZCI6NzI4NTYyODk5NjM3MjM1LCJhc3NldF9hZ2VfZGF5cyI6Mjk2LCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MjIsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;vs=36787054597958eb&amp;_nc_vs=HBkcFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC8yMDQzMzkwOUEzRTJFNjAxREQ1N0ZGOUNDM0FEMUU5NV92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAm5s-izfinywIVAigCQzMsF0A2mZmZmZmaGBJkYXNoX2Jhc2VsaW5lXzNfdjERAHUAZeadAQA&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af1r4i9GlMHLTntCbDjLjoXoFmfVIdzuGpJBDCk8gM511g&amp;oe=69D9D6AE" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-ord5-3.xx.fbcdn.net/v/t39.35426-6/532330299_1775095863374078_40245235971870520_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=106&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=o6WJEmU-1rsQ7kNvwEgc81c&amp;_nc_oc=AdpKK58pi4mRVDKl32uy30xDfMngToHB1LZ69k39vaPwX7biDFsb8jAahR_RaOM4jq0&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-3.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af2Fu7Re1ieUJRXwuEhpPPbXgSHcAy0CS6GL56_HCB97DQ&amp;oe=69DDC224" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/bahestudioems/" target="_blank" rel="noopener" class="page-name">BAH Estúdio</a><div class="ad-sub"><span>IG</span><span>desde Aug/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=1342488353903772" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Bahhhh, se você nunca se encaixou em academias convencionais… a verdade é que o problema não é você. É o método, guria!!! 
+
+No Bah Estúdio EMS, você treina com tecnologia de ponta, foco absoluto em resultado e no seu tempo.
+📍 20 minutos por sessão
+🔥 Ganho real de massa magra
+💥 Emagrecimento com eficiência
+
+Sem multidões. Sem perda de tempo. Sem frustração.
+Se você nunca se encaixou em academias convencionais… a verdade é que o problema não é você. É o método.
+
+No Bah Estúdio EMS, você treina com tecnologia de ponta, foco absoluto em resultado e no seu tempo.
+📍 20 minutos por sessão
+🔥 Ganho rea</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-ord5-2.xx.fbcdn.net/v/t39.35426-6/504389851_1010564037499405_7752560591043617653_n.jpg?_nc_cat=105&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=whD9hhURgOEQ7kNvwGYGUNg&amp;_nc_oc=AdoqxdeXM3t0UgGsk8RWf6WCJva_rsI3C6yJdjveDgkoZl03oPGtrbl9DXWZTQaCyRo&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-2.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af20o_k1bquCE_4J06P3ILgbHThdTb9JHqYn2yGuui1wcw&amp;oe=69DDAEE8" controls preload="none"><source src="https://video-ord5-3.xx.fbcdn.net/o1/v/t2/f2/m69/AQMP9EAnHFP2blPqmS9i-ZA_Unyf33AuFHblTScWpCUQhGPoFlb-FtK0lMslg8mubTzZ06rucTsNHQOAKwkRem5S.mp4?strext=1&amp;_nc_cat=107&amp;_nc_sid=8bf8fe&amp;_nc_ht=video-ord5-3.xx.fbcdn.net&amp;_nc_ohc=2tsYMjkNp8gQ7kNvwEycRFL&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6NzA3MDExOTIxNzEzMTIwLCJhc3NldF9hZ2VfZGF5cyI6MzA4LCJ2aV91c2VjYXNlX2lkIjoxMDEwMSwiZHVyYXRpb25fcyI6NTYsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af35DLPyAMlxFLiJmUx3TMZux6iuAteqpIXiNzvXKlyTyQ&amp;oe=69DDA9F3" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-ord5-3.xx.fbcdn.net/v/t39.35426-6/504144139_1927615794679419_7174835925607664930_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=100&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=A72PlYiV2MgQ7kNvwHu-ZVW&amp;_nc_oc=AdrKAUlkPtMV_rLKcLLSnGvYkczwU0xGF4aO3mSIawCpRbRYuTBK9Ohe6PtcUoLSrpI&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-3.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af2Z7lNQSkRWeluBZQ628PA1eRyPn7f4Q11tTAyHpJEWgA&amp;oe=69DDBE5A" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/ShapeTechStudioEletroFuncional/" target="_blank" rel="noopener" class="page-name">ShapeTech - Studio EletroFuncional</a><div class="ad-sub"><span>IG</span><span>desde Jun/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=703973882352861" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">⚡ Treine por 20 minutos. Sinta como se tivesse feito 1h de musculação!
+
+O colete de eletroestimulação (EMS) da Shape Tech ativa mais fibras musculares com mais eficiência e intensidade durante o exercício.
+
+✅ Fortalece
+✅ Tonifica
+✅ Protege as articulações (sem impacto!)
+✅ Ativa músculos profundos
+✅ Recruta mais fibras em menos tempo 
+
+⚡️ Tecnologia a favor do seu corpo e do seu tempo
+💪 Resultados que você sente desde o primeiro treino!
+
+#EMS #ShapeTechStudio #Eletroestimulação #TreinoEficiente #EletroFuncional #CorpoAtivo #TecnologiaFitness #ResultadosRápidos #TreinoInteligente</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-ord5-3.xx.fbcdn.net/v/t39.35426-6/504412897_1966230054116945_5080964702836996812_n.jpg?_nc_cat=109&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=OPrOjqTUIaYQ7kNvwEkjzFM&amp;_nc_oc=AdqD1zySbNO2Bj1kJZ7VYjbBXkTwiLwlTlPdoICXVy5yKwWitSCXtjPdW17RCrtEytI&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-3.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af1GxWLu6WbhpBhxtcQoMM_6RaGh5TSq_vPhPbIODNOWVA&amp;oe=69DDC514" controls preload="none"><source src="https://video-ord5-2.xx.fbcdn.net/v/t42.1790-2/503318018_1818016808745300_7575745597668181296_n.mp4?_nc_cat=110&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=3KOSDHaefx0Q7kNvwHsTfQa&amp;_nc_oc=AdrteE135Lo8KQTQ4CWAQuvfaVe_cfGTV3RCD6r-LlIutTm88Z41TKvS9aRvxbxYhOw&amp;_nc_zt=28&amp;_nc_ht=video-ord5-2.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af20enGVZIihX65lE3a_YgZmrMzS8PpHSUbrwO9xK4l6ew&amp;oe=69DDB691" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-ord5-2.xx.fbcdn.net/v/t39.35426-6/503972771_684839301050004_3602827209348270274_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=110&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=usz7XlZQfZMQ7kNvwH6wzJ0&amp;_nc_oc=Adq1Hgq4vt4EWptnIRVcfJJO1oyIsL0QG8Ei86pUrQ9oM8hqt6fd90g0V5g0wTdEsh4&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-2.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af3lfqof0x0tS6O1TPOjsR0cpEipl2rZpcUPTOHHN0Xzbw&amp;oe=69DDAD8B" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/ShapeTechStudioEletroFuncional/" target="_blank" rel="noopener" class="page-name">ShapeTech - Studio EletroFuncional</a><div class="ad-sub"><span>IG</span><span>desde Jun/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=1091847062764470" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">✨ Bem-vindo ao futuro do treino!
+
+Na Shape Tech, unimos tecnologia ao treinamento físico para otimizar seu tempo, e transformar seu treino em resultados reais! 
+
+Unimos 3 tecnologias: 
+
+⚡ Eletroestimulação (EMS) – ativa mais fibras musculares com profundidade e eficiência (20 minutos)
+🔥 BodyShape - esteira com vácuo e infravermelho que potencializa a queima de gordura (25 minutos)
+💥 WeSculpt – campo eletromagnético que trabalha músculos profundos trazendo força, saúde e definição muscular (25 minutos)
+
+Oferecemos a melhor solução para você em um só lugar! 
+
+📌Não precisa mais passar horas na ac</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-ord5-3.xx.fbcdn.net/v/t39.35426-6/605261387_1506684357056238_3991271468025402127_n.jpg?_nc_cat=104&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=pZh0-JSm3dEQ7kNvwEn5qXU&amp;_nc_oc=AdolkNeGzGGcyxxeN6lo7q29IEvfksz9l-YQ4br-rXpLBkHpyqZruFTPcdmiFgNoUfs&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-3.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af1IWLa2aBNFy-qAYsCZeOqMJ601joLeXeZG_ZbfGNFIBQ&amp;oe=69DDCC5A" controls preload="none"><source src="https://video-ord5-3.xx.fbcdn.net/o1/v/t2/f2/m86/AQPZPJmS6kgosWKx5SklLs_30vpAYed3t0w9AyHjoGQVpEiw3w3OQ8Y5jYzu-Y7Uui1-cFdbjte3uNZJoRALQPoH91X0s133fG0ArHw.mp4?_nc_cat=100&amp;_nc_sid=5e9851&amp;_nc_ht=video-ord5-3.xx.fbcdn.net&amp;_nc_ohc=McEs31-C2SoQ7kNvwF3AHcJ&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLmRhc2hfYmFzZWxpbmVfM192MSIsInhwdl9hc3NldF9pZCI6NzkxMDcyMTk3MDI1MTc4LCJhc3NldF9hZ2VfZGF5cyI6MTYzLCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MzAsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;vs=fd297aceb8e78435&amp;_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC9FNDRGQTg2RjM2MkNGRTdGMkQ5QjVBRkM0Q0I2REJBMl92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYR2lnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC8yMDYxMjc3MzA4MDI3OTQ3XzE2NjAwNTY1MTYwODkwNzU3MDAubXA0FQICyAESACgAGAAbAogHdXNlX29pbAExEnByb2dyZXNzaXZlX3JlY2lwZQExFQAAJrT23JS73ucCFQIoAkMzLBdAPqIMSbpeNRgSZGFzaF9iYXNlbGluZV8zX3YxEQB1AGXmnQEA&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af309yOsDxd_3WYqPE15fu8E7q9ubU236dbL9Vdv6dR9jg&amp;oe=69D9DBC1" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-ord5-3.xx.fbcdn.net/v/t39.35426-6/600891960_849247227872623_4581626908748366386_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=109&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=2bE-i2EMZdkQ7kNvwFcOQFs&amp;_nc_oc=AdoALmzEcGXX1QY_p1G-tpndiPSHNUuYUmoXnLvEl-CA1fq6MQrNKADk_2xHwr4_OnY&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-3.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af2G8OMzHDVmzpLZLxuDxOW2Af0BrDc3t36XXwDnBqaoWQ&amp;oe=69DDD704" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/imperiumacademia.es/" target="_blank" rel="noopener" class="page-name">Imperium Academia</a><div class="ad-sub"><span>FB · IG · AN · THREADS</span><span>desde Dec/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=1500928734324958" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">🕒 Sem tempo pra treinar?
+A gente entende. A rotina é corrida, os compromissos não param — e cuidar de si acaba ficando pra depois.
+
+Mas e se em apenas 20 minutos você conseguisse resultados reais, equivalentes a 2 horas de treino tradicional? 💥
+
+Na Imperium Academia Colina de Laranjeiras, o treino de eletroestimulação (EMS) foi feito pra quem quer performance, definição e saúde, mesmo com pouco tempo.
+
+⚡ Tecnologia avançada
+⚡ Acompanhamento profissional
+⚡ Resultados em menos tempo
+
+📍 Experimente a Eletroestimulação da Imperium e descubra que falta de tempo não é mais desculpa.
+👉 Chame no Whats</div></div></div>
+<div class="ad-card"><div class="ad-media"><img src="https://scontent-ord5-2.xx.fbcdn.net/v/t39.35426-6/447740211_1167546624432175_1278450390006439660_n.jpg?stp=dst-jpg_s600x600_tt6&amp;_nc_cat=110&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=2Egg7N7BSKcQ7kNvwFkzWxc&amp;_nc_oc=AdpI7VsyPed4eeJ_S1V0b7LuT2GH-WfpzO2-ABa5ng2j86odgXIjo20y5xxWSFhpJdE&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-2.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af3mz8VIsE2YS6tpDTP_M9n-GASogfqIAgC-H37H3r7qlQ&amp;oe=69DDB4BE" alt="Pulse Pilates EMS Garopaba" loading="lazy" /></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-ord5-3.xx.fbcdn.net/v/t39.35426-6/447239631_980236160293301_8644914249894731686_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=109&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=CPDrDalpcX0Q7kNvwHNdqsg&amp;_nc_oc=AdofXFx0DwbJzJrBgV_Oxx8zbpIn1aGVEcfCo_Qpj6d8kMEiC3j1pgxLOePjEg3DyKA&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-3.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af2KtwqeLh2-Fr3QcJNGde4VogZXSU35gHXiLfZ_vyfEeQ&amp;oe=69DDBD73" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/61559115436481/" target="_blank" rel="noopener" class="page-name">Pulse Pilates EMS Garopaba</a><div class="ad-sub"><span>FB · IG · AN · MS</span><span>desde Jun/2024</span></div></div><a href="https://www.facebook.com/ads/library/?id=856486619626469" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">{{product.brand}}</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-ord5-3.xx.fbcdn.net/v/t39.35426-6/616088355_816492921422257_1545017548709429690_n.jpg?_nc_cat=100&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=LdwW72elU5MQ7kNvwGQ3AUR&amp;_nc_oc=AdoR8_BMW86OIupc6z4iQ8HQg5VoyCgcWoZjnqnj3XdvFPP2ThAOnh5DiA-F6YkD6WU&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-3.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af1B9Cc_znXrzmrBAlw7R4N06BDXmLZpgnnuMcb5Lnr4jw&amp;oe=69DDBDB9" controls preload="none"><source src="https://video-ord5-2.xx.fbcdn.net/o1/v/t2/f2/m86/AQPOYw55N9fgql8GDiXcQZYx7URtxrXPi9t8KmxDjLv8EIkzB1Jg-_unbDDAxyagm2AeqECLKjxoQ2sdOVRFGQcNH3zcqt9GNKIolO4.mp4?_nc_cat=110&amp;_nc_sid=5e9851&amp;_nc_ht=video-ord5-2.xx.fbcdn.net&amp;_nc_ohc=frBnCHD3LDAQ7kNvwEgCln5&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLmRhc2hfYmFzZWxpbmVfM192MSIsInhwdl9hc3NldF9pZCI6Njg3OTQ4MzQzOTM4NzczLCJhc3NldF9hZ2VfZGF5cyI6MzE1LCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MjcsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;vs=dc1c1e494530b72a&amp;_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC84NDQzNTVENzMxQTk0RTBGMzQ4QkUzRTdBNUE0MkU4NV92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYR2lnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC8xMDMyMDMwMDU5MTE1OTM4Xzc1MjY1NTA4MzM4NTc1OTc3MDAubXA0FQICyAESACgAGAAbAogHdXNlX29pbAExEnByb2dyZXNzaXZlX3JlY2lwZQExFQAAJqq70Mru67gCFQIoAkMzLBdAO_dLxqfvnhgSZGFzaF9iYXNlbGluZV8zX3YxEQB1AGXmnQEA&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af0wCM72uirBcajl7ObUQhV_I4uG4sSSmbGUO0eKBV8iXg&amp;oe=69D9C3D3" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-ord5-1.xx.fbcdn.net/v/t39.35426-6/614728245_1968755310721677_5609121389133975689_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=108&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=P-mYELlUe4AQ7kNvwHN9zbH&amp;_nc_oc=AdqEZuC-VGwRUxRDp2fOQOdaAARmuKOcaIK_SxiTzgE25D8o180yAZ5wvZa1aURv2_o&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-1.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af3CacmWQiBc9ClqQAf9Aa8-MZFaJdmyuCkA8GpLa3T8Ag&amp;oe=69DDCBF0" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/bahestudioems/" target="_blank" rel="noopener" class="page-name">BAH Estúdio</a><div class="ad-sub"><span>IG</span><span>desde Jan/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=1206377224370773" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">💪🏻Bahhh é massa magra e definição em outro nível.
+.
+⏰Enquanto muitos perdem tempo na academia, aqui você foca no que importa: resultado real, rápido e eficiente.
+.
+⚡️A Eletroestimulação Muscular (EMS) acelera o ganho de massa magra, ativa fibras profundas e entrega uma definição que treino convencional nenhum consegue.
+.
+🚀Aqui não tem achismo, nem milagre. Tem tecnologia, performance e resultado.
+.
+📲Agende sua aula experimental agora (12) 98284 0807</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-ord5-3.xx.fbcdn.net/v/t39.35426-6/504467720_715952307697626_4683107881329650696_n.jpg?_nc_cat=109&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=OgOcX991_ukQ7kNvwESWHqx&amp;_nc_oc=AdpnOjQWQi1yYrMxDLzaVICm274JqinfDVlTDOy-1vmMStYJRHO9RKxOSFhuoIFPxz4&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-3.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af1Ox6fnmqKr2dUlIOgc0P5q8dwNTOkFXAWjSJ2tJ0nu2A&amp;oe=69DDBDBB" controls preload="none"><source src="https://video-ord5-2.xx.fbcdn.net/o1/v/t2/f2/m69/AQMrFFEIWSOIuwRKoEeeE8SHzgpkBkFKp5Wknq3FC_j3fuuXRicucyvYrc6dhIsB1zYnzOyUpPlmSRpCocra6fhw.mp4?strext=1&amp;_nc_cat=103&amp;_nc_sid=8bf8fe&amp;_nc_ht=video-ord5-2.xx.fbcdn.net&amp;_nc_ohc=_o8hobKnUkMQ7kNvwFJ_-Wu&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLmFzaWNfaHExX3NkX3Byb2dyZXNzaXZlIiwieHB2X2Fzc2V0X2lkIjoxMTYxNjY3NTU2MTUyMTcwLCJhc3NldF9hZ2VfZGF5cyI6MTUwLCJ2aV91c2VjYXNlX2lkIjoxMDY4MCwiZHVyYXRpb25fcyI6MjcsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af0qn23n7Z8FRs0Qcc8OkqoG2Musd-jKcg_CWgWbG5BRUg&amp;oe=69DDAE4F" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-ord5-2.xx.fbcdn.net/v/t39.35426-6/503903783_1262394795499632_1221464751696989120_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=110&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=i0M1HRH9DuYQ7kNvwGZrJ9k&amp;_nc_oc=Adq-PuZDbEJ6IhAp1kLFfMLTJ523NcYzkKDTKbkLl1zzgGxtL0QsMNefBndZqCfz5E4&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-2.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af0gyd3FNTe0wdsLbp23LsQDtG1fI4duJWoZMNUrPKMGMg&amp;oe=69DDBD5B" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/bahestudioems/" target="_blank" rel="noopener" class="page-name">BAH Estúdio</a><div class="ad-sub"><span>IG</span><span>desde Jun/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=1045760941033112" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">💪🏻Bahhh é massa magra e definição em outro nível.
+.
+⏰Enquanto muitos perdem tempo na academia, aqui você foca no que importa: resultado real, rápido e eficiente.
+.
+⚡️A Eletroestimulação Muscular (EMS) acelera o ganho de massa magra, ativa fibras profundas e entrega uma definição que treino convencional nenhum consegue.
+.
+🚀Aqui não tem achismo, nem milagre. Tem tecnologia, performance e resultado.
+.
+📲Agende sua aula experimental agora (12) 98284 0807</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-ord5-1.xx.fbcdn.net/v/t39.35426-6/623416309_1581723849761125_5936752697164147046_n.jpg?_nc_cat=101&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=lciqPBkNzs4Q7kNvwG_X0kW&amp;_nc_oc=AdpEaJV3YxR5JLNHlh92RT8mrWB9lx35FZGtie-cDeTkKmMTcwd6i5ZuoirPHFySuVE&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-1.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af14RyCUxwqZuArpWsndhROZO-uv5F2YNtoKvMUYT1eEzQ&amp;oe=69DDC9A1" controls preload="none"><source src="https://video-ord5-2.xx.fbcdn.net/o1/v/t2/f2/m412/AQOLzlucULOebV8wA51rNZ2JltpIEzQr1de3XgIkfrEy4HsZravckcwNkhVlIf31r8pAAf6KBpuEuTW12TGfFDoQLKWC4GXdFo9Wku9Ddw.mp4?_nc_cat=103&amp;_nc_sid=8bf8fe&amp;_nc_ht=video-ord5-2.xx.fbcdn.net&amp;_nc_ohc=0u6X367JSDkQ7kNvwGirYwW&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6NzU2NzA5MTEzNzE5MDc2LCJhc3NldF9hZ2VfZGF5cyI6NjYsInZpX3VzZWNhc2VfaWQiOjEwNzk5LCJkdXJhdGlvbl9zIjo2MCwidXJsZ2VuX3NvdXJjZSI6Ind3dyJ9&amp;ccb=17-1&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af2-0598tRaBRY96m6lMSZKD-_Rs7p7pNqg-FxhIWtjYUA&amp;oe=69DDB7B3" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-ord5-3.xx.fbcdn.net/v/t39.35426-6/625914561_2329330710903130_2050472526002136574_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=107&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=1StFBy6S4hEQ7kNvwGzmt5B&amp;_nc_oc=Adqpkx-W3oCxdVh_Rk78bbwO27Y5yi_8rOxJZH-agHZVddsUTBMY8XtuOvLLZ-xDGrE&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-3.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af2q-uoASdiU4ry3vBQKVu5ESHbP0I3_NFZHtPj6fDOdIQ&amp;oe=69DDD2B4" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/61552544398702/" target="_blank" rel="noopener" class="page-name">Studio Pulsar </a><div class="ad-sub"><span>FB · IG · AN · MS</span><span>desde Feb/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=839218259134089" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">⚡ Eletroestimulação de Corpo Inteiro (EMS) ⚡
+É uma tecnologia que usa impulsos elétricos suaves para ativar vários músculos ao mesmo tempo 💪. Ajuda a fortalecer, tonificar, melhorar a circulação 🩸 e acelerar resultados em treinos curtos ⏱️. Tudo isso com segurança e acompanhamento profissional ✅✨</div></div></div>
+<div class="ad-card"><div class="ad-media"><img src="https://scontent-ord5-3.xx.fbcdn.net/v/t39.35426-6/626653527_748715681252752_4214864655555007881_n.jpg?stp=dst-jpg_s600x600_tt6&amp;_nc_cat=106&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=0kMviY4wDoYQ7kNvwG2laoF&amp;_nc_oc=Adqemi-HsPMxADQ8PY-CwUAe7OfcdlyKxHmISvfkuIFUqbwMRXnSj2xyuZAC_T6eP0Y&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-3.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af3DnxOB-ICV-t9qMDW8XjwJ0-yLGCnzXkd2CLxKQB8Kew&amp;oe=69DDCD81" alt="Jet&#39;z Studio Fitness" loading="lazy" /></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-ord5-3.xx.fbcdn.net/v/t39.35426-6/627037942_4297942017187946_7214786573207076367_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=100&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=l1zcO8DYVUwQ7kNvwE56x6B&amp;_nc_oc=AdpZ1aavY1we-_QkRUV93iszeo5h3vFXpe-0BxGAwh6uYeMWerZ0-ZGrY774MV4t8Os&amp;_nc_zt=14&amp;_nc_ht=scontent-ord5-3.xx&amp;_nc_gid=BOBr7AfVRJ9w7qv4RyPmAQ&amp;_nc_ss=7a389&amp;oh=00_Af20A0_tsCc6HC5GKMyuzya7G8z30Il6YX1C6ZfrOJlHRw&amp;oe=69DDAF55" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/61556511876137/" target="_blank" rel="noopener" class="page-name">Jet&#39;z Studio Fitness</a><div class="ad-sub"><span>FB · IG</span><span>desde Feb/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=1957521044803976" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Lipedema &amp; EMS: uma nova aliada no tratamento 
+
+A EMS promove contrações musculares profundas e controladas, gerando estímulos que auxiliam diretamente no manejo do lipedema
+
+ ✅ Ativa a circulação e a drenagem linfática
+ ✅ Reduz o inchaço e a retenção de líquidos
+ ✅ Estimula o metabolismo da gordura
+ ✅ Fortalece a musculatura, dando mais sustentação aos tecidos
+ ✅ Diminui a sensação de dor e peso nas pernas
+
+Tudo isso em sessões de 20 minutos, com baixo impacto articular e alto estímulo muscular.
+
+⚡️ Mais ativação, menos dor, mais qualidade de vida.
+
+📅 Agende sua experiência - link na bio
+
+#em</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/600089501_845963358181390_6258821329794837803_n.jpg?_nc_cat=105&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=oG9KdTTx0UwQ7kNvwG0pTOW&amp;_nc_oc=Adq0b0a7rg1ST3nCMKejBJIoPbMFl0vVQCuiazdeB26FAU7t5DWjJsF7HtjIq5UfIo4&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af33kIrqPU5nUGW60hIO_cY3YsbniEvuDkz_MWCTBuooXg&amp;oe=69DDC998" controls preload="none"><source src="https://video.ffyv1-1.fna.fbcdn.net/o1/v/t2/f2/m86/AQPhnHNCRoKwQnOQvfuSO7MBtvZFWBYg52S8SJo1QP0BT2ePrr6_8kDauEdaSeN2c8RvA5fWqiTFzfIS9KUwxwpYbp34NYqWBZkwLZU.mp4?_nc_cat=109&amp;_nc_oc=Adqeixl5UzvIDxb-vddAH1W9AJ17_ovL_sEWMrgRlluum5cjCM1fvqqaIeNsjnSmyXQ&amp;_nc_sid=5e9851&amp;_nc_ht=video.ffyv1-1.fna.fbcdn.net&amp;_nc_ohc=ahRTrnpkgOEQ7kNvwFtqpbR&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLmRhc2hfYmFzZWxpbmVfM192MSIsInhwdl9hc3NldF9pZCI6ODQ5ODc0Mjc3NDA1ODkxLCJhc3NldF9hZ2VfZGF5cyI6MTQ3LCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MjYsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;vs=ddd7da7a05ef8061&amp;_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC83OTRFRjFFN0FGMUU0NjVFQjJEMjZEOUE0NkM1RDM5M192aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYRmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC8xMjI3NDEzNzgyNTU1Njc4XzkwNTQ4NTUzNjI0Mjc5NDY3MC5tcDQVAgLIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAmhtPE5pi9ggMVAigCQzMsF0A6ogxJul41GBJkYXNoX2Jhc2VsaW5lXzNfdjERAHUAZeadAQA&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af1tZ14mtIuK1ZUU_545v6Iry7YNVLJvrhDD8jowgoD-jw&amp;oe=69D9CA72" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/600205331_1420302059533805_3886150790076241627_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=104&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=wm3YpVQ7HGoQ7kNvwGz8j3a&amp;_nc_oc=Ado6TGAUKGYRHddL9g8xxeGxoPfSEsGQ-ZsLPJ2mqsR_fF7qq_RJ2mWM5T4XGJ-wEpY&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af0TaUPEWaT1qCLZCFtRodNvYmthiPDd7pAk1BpA6c8Sbw&amp;oe=69DDD1AF" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/100088075795986/" target="_blank" rel="noopener" class="page-name">Realser Londrina</a><div class="ad-sub"><span>FB · IG · AN · MS · WA</span><span>desde Dec/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=1498762547842847" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Por trás de cada resultado, existe método. ⚡
+
+O Eletrofitness não é &quot;moleza&quot; nem &quot;milagre&quot; , é tecnologia aplicada ao corpo humano.
+
+Enquanto você faz 20 minutos de treino aqui, seus músculos trabalham como se estivessem há 2 horas na academia. E não estamos exagerando:
+
+✅ Ativa até 90% das fibras musculares simultaneamente
+✅ Queima calorias + fortalece + tonifica
+✅ Acompanhamento profissional em cada sessão
+✅ Resultados visíveis em 4 semanas
+
+Na Realser, estética é ciência. E ciência gera confiança.
+
+Quer entender se o Eletrofitness é pra você? Chama no direct ou clica no link da bio.</div></div></div>
+<div class="ad-card"><div class="ad-media"><img src="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/619111813_1587040772568609_4739063370807192348_n.jpg?stp=dst-jpg_s600x600_tt6&amp;_nc_cat=102&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=pQAngnJjY5YQ7kNvwG7kFuw&amp;_nc_oc=Ado4oEtVJBsrI6DHZ7diYStoiJ9o_uj1yzEdPjaGqxWgj3GKickS3mkMyfDT8c8f8ws&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af0jgIjCBYI04kYEX6wW3DjeD7cWfwpDBqhieYUMZNyYaw&amp;oe=69DDCF13" alt="Jet&#39;z Studio Fitness" loading="lazy" /></div><div class="ad-info"><div class="ad-header"><img src="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/619083851_1444948507205782_7803920217320353079_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=111&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=gLWyw-4CBFwQ7kNvwFh8zVK&amp;_nc_oc=Adol0MsUdEWF5JGs34w08dVqIQDRf-5qTLpcJfS9IOazt9kpXHKaoHbiwHW9I1NksLM&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af1FJrHzAhbraerHcTbWnYmxuUZOrdX9uQ8OVDrE2zAAGw&amp;oe=69DDA68F" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/61556511876137/" target="_blank" rel="noopener" class="page-name">Jet&#39;z Studio Fitness</a><div class="ad-sub"><span>FB · IG</span><span>desde Feb/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=1206229561686906" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Usando Monjaro? Então você PRECISA ler isso! 🚨
+
+O Monjaro é poderoso, mas sozinho ele não faz milagres. 
+A verdade que poucos falam: sem exercícios, você pode perder peso... mas também perder massa muscular e saúde.
+
+Por que exercícios são essenciais:
+
+✅Preserva seus músculos - Durante o emagrecimento, o corpo pode &quot;comer&quot; sua massa magra. Treino de força protege isso.
+✅Acelera o metabolismo - Mais músculo = mais calorias queimadas, mesmo em repouso.
+✅Potencializa os resultados - Monjaro + exercício = perda de gordura mais eficiente e duradoura.
+✅Melhora sua saúde metabólica - Aumenta a sensib</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/645033208_2286763045144204_3139928081852669245_n.jpg?_nc_cat=100&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=jcgFoHgY-r0Q7kNvwHCDXPF&amp;_nc_oc=AdqG0DYqgl-OgikBAI3alRKRLxzZv8Pi4pxJ9yebNciquKEXkM-TeyqO25xRIkr5S8E&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af1p11cl36CLdgzbpCSSGlJ_V5XZ7rMwIWj7bLEBIpvLqw&amp;oe=69DDC2BE" controls preload="none"><source src="https://video.ffyv1-1.fna.fbcdn.net/o1/v/t2/f2/m367/AQMwVoudqDS6c-1FoREP0FuMJfV7Ebm1Y1DtJprOjULpr4XGYX-D6cfqOl8hDpmOW_B0_lJySRs0qapr0pH6I08n3DuJq8KJ1G8SgBVzbw.mp4?_nc_cat=105&amp;_nc_oc=Adr6fEclM2zs-HxwPhN6MYi-zzInSRQY9yCkzlKdbHurlkO1xdXL1oorSSxxYBXkCwM&amp;_nc_sid=8bf8fe&amp;_nc_ht=video.ffyv1-1.fna.fbcdn.net&amp;_nc_ohc=cqGAULsrDBMQ7kNvwHpzwnE&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnByb2dyZXNzaXZlX2gyNjQtYmFzaWMtZ2VuMl8zNjBwIiwieHB2X2Fzc2V0X2lkIjoxNzg3MDY1MDI1NzUzMTUxNSwiYXNzZXRfYWdlX2RheXMiOjc2LCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MzEsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af27bBGn0GS7cvItlXpA2K4Z-hldAMJLOfK7zARXGxU3wg&amp;oe=69DDB4E1" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/645415279_1987013268860531_271196726009028094_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=100&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=KxKFTgMjo1QQ7kNvwFYmRLz&amp;_nc_oc=AdoLNGlIsuPI6cY3rUCnfWmQftLYZD9sxQkhU-gDqzqDPN1DOExn8EIn_kxcyi4XkpI&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af0e1BVam23A59kw9wugmsQhsWPbzONrpo9U4CaOrbWZvA&amp;oe=69DDC46B" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/61580901813043/" target="_blank" rel="noopener" class="page-name">Em20 Eletroestimulação</a><div class="ad-sub"><span>IG</span><span>desde Mar/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=893679500247167" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">O gasto calórico do EMS não acontece só durante a sessão.
+
+O principal impacto vem depois, quando o corpo entra em um processo intenso de recuperação:
+* reparo das fibras musculares
+* reorganização do sistema neuromuscular
+* manutenção do metabolismo em nível elevado
+
+Esse processo é conhecido como efeito pós-estímulo quando o corpo continua gastando energia mesmo após o treino terminar.
+
+Por isso, resultado não está ligado apenas ao tempo treinado.
+Está ligado à resposta metabólica que o estímulo certo provoca.
+
+Treinar melhor muda como o corpo trabalha, inclusive depois da sessão.</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/626764600_897970456299299_3718226649496926616_n.jpg?_nc_cat=110&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=0Mk3DOMep1MQ7kNvwHsUY9R&amp;_nc_oc=Adp-aBZbY2oeTEvdR7AQ-5DQWfRb37RWMg442IUZ1fp6ZvuW7KT_Z41VVqZfj6jN6e0&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af2mDIrzk2HpWcBSzy4fDm7vQpdisnh35-raWrIKfwg-0A&amp;oe=69DDBAF3" controls preload="none"><source src="https://video.ffyv1-1.fna.fbcdn.net/o1/v/t2/f2/m367/AQMzbvruuqLQg32ekfNOJ2NC_RW49sltjUxXieX6jZC6fysWH8rRZwQhUCIQKTD-1-i_G131R8eM-7t3IwhU8IomofWxnEQMQXPRbDXvAw.mp4?_nc_cat=111&amp;_nc_oc=Adola2jBAK61WCapcyAKgCG4Olt4GLT4cwKoA-533No22BcYy2OIV4ENAkLQPUquKbQ&amp;_nc_sid=8bf8fe&amp;_nc_ht=video.ffyv1-1.fna.fbcdn.net&amp;_nc_ohc=j2kYs7Tp4o8Q7kNvwHAZ6YD&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnByb2dyZXNzaXZlX2gyNjQtYmFzaWMtZ2VuMl8zNjBwIiwieHB2X2Fzc2V0X2lkIjoxNzkzNDg5MjcyNTE1NTY5NCwiYXNzZXRfYWdlX2RheXMiOjc2LCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MjcsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af3eaQaxTNMgSB6mY6INLu102lMrOpgFK2ZTMYDZ7tTQcQ&amp;oe=69DDC567" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/626710426_26209059075378630_4539158350771491236_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=103&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=4axVUAWyhFQQ7kNvwEv9sc6&amp;_nc_oc=Adqcc5t0jGLT83EkK2zI5lOkTTdXt3T0JXcjQzDv40kZL_V7EQk1EOiovM25Hv4ISLU&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af2F9c_-TAP8Eyj58iom8hYXL_RH3IIqfwKPfWzgbtNh_Q&amp;oe=69DDA93E" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/61556511876137/" target="_blank" rel="noopener" class="page-name">Jet&#39;z Studio Fitness</a><div class="ad-sub"><span>FB · IG</span><span>desde Feb/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=1624240892098270" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Eletroestimulação é para VOCÊ! 💪⚡
+
+Sabe aquela desculpa de que &quot;esse treino não é pra mim&quot;? Pode esquecer.
+O treinamento com eletroestimulação foi desenvolvido para se adaptar a TODAS as pessoas:
+
+✅ Homens e mulheres
+✅ Qualquer idade
+✅ Com ou sem limitações físicas
+✅ Iniciantes ou avançados
+
+Seu objetivo é emagrecer? Ganhar massa muscular? Recuperar uma lesão? Melhorar o condicionamento físico? A eletroestimulação trabalha do seu jeito, no seu ritmo, para o seu resultado.
+
+Pare de procurar o treino perfeito. O treino que se adapta perfeitamente a você já existe.
+Vem conhecer! 🚀
+
+📅 Agenda sua e</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/631355694_1986830202047591_5915498772772449940_n.jpg?_nc_cat=105&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=ObllYcHMdKcQ7kNvwFi-uB4&amp;_nc_oc=Ado0cx0aD0quUhDvMnWilSq-CdrToR49eWTss6Ryk4qD1sPS-pl3qMhQQm_6zAdZ0zk&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af1Eq2HVChMLtYZ-9bn_Mk2CE80Htn8ebBnAq8ZnoSRIog&amp;oe=69DDBEC7" controls preload="none"><source src="https://video.ffyv1-1.fna.fbcdn.net/o1/v/t2/f2/m367/AQMzbvruuqLQg32ekfNOJ2NC_RW49sltjUxXieX6jZC6fysWH8rRZwQhUCIQKTD-1-i_G131R8eM-7t3IwhU8IomofWxnEQMQXPRbDXvAw.mp4?_nc_cat=111&amp;_nc_oc=Adola2jBAK61WCapcyAKgCG4Olt4GLT4cwKoA-533No22BcYy2OIV4ENAkLQPUquKbQ&amp;_nc_sid=8bf8fe&amp;_nc_ht=video.ffyv1-1.fna.fbcdn.net&amp;_nc_ohc=j2kYs7Tp4o8Q7kNvwHAZ6YD&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnByb2dyZXNzaXZlX2gyNjQtYmFzaWMtZ2VuMl8zNjBwIiwieHB2X2Fzc2V0X2lkIjoxNzkzNDg5MjcyNTE1NTY5NCwiYXNzZXRfYWdlX2RheXMiOjc2LCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MjcsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af3eaQaxTNMgSB6mY6INLu102lMrOpgFK2ZTMYDZ7tTQcQ&amp;oe=69DDC567" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/631372343_1416540056930819_1003945331619869074_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=105&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=j2MHP63afdEQ7kNvwGBNZZG&amp;_nc_oc=AdqKk6C-TM7W5EQsM-rL3K-T66Sg8cQl5U0n-BZjEJDzCRXLG7VrW-DHsfWYFx90xhQ&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af0PEvo_oblwJN_v6b5YGuh2Ok7ho7PhZNVCIKA1e5ianQ&amp;oe=69DDD173" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/61556511876137/" target="_blank" rel="noopener" class="page-name">Jet&#39;z Studio Fitness</a><div class="ad-sub"><span>FB · IG</span><span>desde Feb/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=1960235524923055" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Eletroestimulação é para VOCÊ! 💪⚡
+
+Sabe aquela desculpa de que &quot;esse treino não é pra mim&quot;? Pode esquecer.
+O treinamento com eletroestimulação foi desenvolvido para se adaptar a TODAS as pessoas:
+
+✅ Homens e mulheres
+✅ Qualquer idade
+✅ Com ou sem limitações físicas
+✅ Iniciantes ou avançados
+
+Seu objetivo é emagrecer? Ganhar massa muscular? Recuperar uma lesão? Melhorar o condicionamento físico? A eletroestimulação trabalha do seu jeito, no seu ritmo, para o seu resultado.
+
+Pare de procurar o treino perfeito. O treino que se adapta perfeitamente a você já existe.
+Vem conhecer! 🚀
+
+📅 Agenda sua e</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/572341395_811257441614562_803571693772242063_n.jpg?_nc_cat=110&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=ZN7sXhfkIWkQ7kNvwGh2lQ-&amp;_nc_oc=AdrkCv8jmy-hAJMMykDTLY3qHYd7R7inkGDXzWFlEhVADrGwasaB1jhv5Br7pD6C5WE&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af2nQrKKT7RzBTAa62UGmRCv2UdpiEnRnoDDK0A0TDD1mA&amp;oe=69DDB2F4" controls preload="none"><source src="https://video.ffyv1-1.fna.fbcdn.net/o1/v/t2/f2/m69/AQNESYQm2Lipywe7JSE8jpoBfNl8jVJMyqAARRSsxXZWIAQalkwA1PDWHxY-o20yWZYEJAmDYROhcFkMHv98noua.mp4?strext=1&amp;_nc_cat=111&amp;_nc_oc=AdrWZyP56Tm8eTKq03tsgRwqWkb63FQmlhtXxzDRvd-1sRn_aFOaTDF15mW5zhY74GI&amp;_nc_sid=8bf8fe&amp;_nc_ht=video.ffyv1-1.fna.fbcdn.net&amp;_nc_ohc=1PKhgPls8S0Q7kNvwEemtOr&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6NTk0MTYyNDEwMjgxOTk5LCJhc3NldF9hZ2VfZGF5cyI6Mzk3LCJ2aV91c2VjYXNlX2lkIjoxMDc5OSwiZHVyYXRpb25fcyI6NTcsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af3j1D57T4mxImwjZ-Fq3tXCfEaNIKMV3XY7UrnWOIAADA&amp;oe=69DDCAE3" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/572339940_1883329185726439_5476954139086937034_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=101&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=vBt3gQ0a82kQ7kNvwEfDzpM&amp;_nc_oc=AdpX5_-uucz0o3m5WawUbbbXN0jTbmeXeTKK4DCchuyQh3Q4tulU4szqGp5mw_vFLmQ&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af3VA2FIp080f1BlfX6pHvvicbXB3_yDWNendbu-3oNk0A&amp;oe=69DDB2E8" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/61571590832589/" target="_blank" rel="noopener" class="page-name">Ampére - Eletroestimulação EMS - Araraquara</a><div class="ad-sub"><span>FB · IG · WA</span><span>desde Oct/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=1853429461920835" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Resultados em menos de 40 minutos de treino? É possível com Ampère! 💪
+
+Com nossa tecnologia de eletroestimulação, conquiste mudanças reais em até 8 semanas.
+
+Treine de forma eficiente e segura, alcance seus objetivos com a Ampère</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/574566777_24808485158823931_3340369836934706809_n.jpg?_nc_cat=106&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=oaeyofxAk70Q7kNvwH5Mg50&amp;_nc_oc=AdpT4_lZlXTt8Tc42GRPzCVNbWVjnBgavP9AnsD6uTy3zvgokOMDks6L7KahwgSQrGI&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af1fiCsA26qdFgtqmKii00ZHT_UI6mv5jY6bYbSQb7LjCQ&amp;oe=69DDCFBF" controls preload="none"><source src="https://video.ffyv1-1.fna.fbcdn.net/o1/v/t2/f2/m69/AQOvaXg98UTLA8Nl7Ad01l354B2VrRbqJk4XTXYFkmB7ezPtm4Kx_zG94Vuu73d7Dw6p_LU52WBPqWm4ysReXnlD.mp4?strext=1&amp;_nc_cat=111&amp;_nc_oc=AdpQnAjvjT_xuGPYeSRQFApGPGJmcMicXhcbYoKj7V9hJxzEa173Oz8g4bX7Defu-XY&amp;_nc_sid=8bf8fe&amp;_nc_ht=video.ffyv1-1.fna.fbcdn.net&amp;_nc_ohc=27bO0-J9NWUQ7kNvwHx-Kwa&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6MTc1NDExODE1MjIwNTM1NSwiYXNzZXRfYWdlX2RheXMiOjM0NSwidmlfdXNlY2FzZV9pZCI6MTA3OTksImR1cmF0aW9uX3MiOjQ4LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&amp;ccb=17-1&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af0EfqsbcEUJqiex5IWcMI-_38LXjLJChFFCKSluxbWxSQ&amp;oe=69DDB3BF" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/573319549_1574530510628659_8978069588146973503_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=102&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=jOrSwJN2Sy0Q7kNvwF16HJm&amp;_nc_oc=AdpkKFZJS6zY-9GV36IR1wNGXKd7Uo4YlpQXTA9A_zY8Tp3YDxibNbFLHCi6cEYw338&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af1kuzQdLNcemG0iEzHMgDdANoVkADJgmlJSZecOWlYkPA&amp;oe=69DDD432" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/61571590832589/" target="_blank" rel="noopener" class="page-name">Ampére - Eletroestimulação EMS - Araraquara</a><div class="ad-sub"><span>FB · IG · WA</span><span>desde Oct/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=4217931918442517" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Resultados em menos de 40 minutos de treino? É possível com Ampère! 💪
+
+Com nossa tecnologia de eletroestimulação, conquiste mudanças reais em até 8 semanas.
+
+Treine de forma eficiente e segura, alcance seus objetivos com a Ampère</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/615436348_887508667203109_5040523504922975744_n.jpg?_nc_cat=105&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=b4K7TzKMMyQQ7kNvwE9OzXM&amp;_nc_oc=Adph0qsVZhBIirQ7aOcecTE5jP6-JDuy8z4KXM6unVoJ0LrcJVNL69OextFdWWYeEuA&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af2oCdxXnriH4uRRZxRnqdeadxS7qUUKqUm-Q5uB82aBww&amp;oe=69DDBFF1" controls preload="none"><source src="https://video.ffyv1-1.fna.fbcdn.net/o1/v/t2/f2/m86/AQNLhp10ETiY0NOp2OsKpcXk-0phwaHyGd6umYdKN91FrtXICMXIDEzggu3E2TCdj8GCSMCE4sMqaY08mYoJJ5Egrug1E2VmPiR7-C4.mp4?_nc_cat=105&amp;_nc_oc=AdphVeyJo6pQcpzCm-5QEqSd1w814CNsyP8TrEOHG2UyQ84Aew2XjGjdY0O68ALKjZw&amp;_nc_sid=5e9851&amp;_nc_ht=video.ffyv1-1.fna.fbcdn.net&amp;_nc_ohc=5bT96gqz2csQ7kNvwFC_eKG&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLmRhc2hfYmFzZWxpbmVfM192MSIsInhwdl9hc3NldF9pZCI6NzI4NTYyODk5NjM3MjM1LCJhc3NldF9hZ2VfZGF5cyI6Mjk2LCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MjIsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;vs=36787054597958eb&amp;_nc_vs=HBkcFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC8yMDQzMzkwOUEzRTJFNjAxREQ1N0ZGOUNDM0FEMUU5NV92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAm5s-izfinywIVAigCQzMsF0A2mZmZmZmaGBJkYXNoX2Jhc2VsaW5lXzNfdjERAHUAZeadAQA&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af3zVrvcrPkJdl3BAY5KQrNN6vTXDH3X3tZSpA02Z5TMSA&amp;oe=69D9D6AE" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/615812018_33640985758849598_6731420527707407339_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=103&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=IDVw7Eb0-HUQ7kNvwFDueuh&amp;_nc_oc=AdpUEXbf6tnPBQ1ZS7bvDEF2QWtWFiha2B02AvKM23x_x_6DI4ASGkJTZ9nRR13EGJk&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af0bNv7tboNtQ77wMDA347G8srXPvdJUx48D9BRJNPkPOQ&amp;oe=69DDCD6D" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/bahestudioems/" target="_blank" rel="noopener" class="page-name">BAH Estúdio</a><div class="ad-sub"><span>IG</span><span>desde Jan/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=1526448328587036" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Bahhhh, se você nunca se encaixou em academias convencionais… a verdade é que o problema não é você. É o método, guria!!! 
+
+No Bah Estúdio EMS, você treina com tecnologia de ponta, foco absoluto em resultado e no seu tempo.
+📍 20 minutos por sessão
+🔥 Ganho real de massa magra
+💥 Emagrecimento com eficiência
+
+Sem multidões. Sem perda de tempo. Sem frustração.
+Se você nunca se encaixou em academias convencionais… a verdade é que o problema não é você. É o método.
+
+No Bah Estúdio EMS, você treina com tecnologia de ponta, foco absoluto em resultado e no seu tempo.
+📍 20 minutos por sessão
+🔥 Ganho rea</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/615399123_923869346728343_5480058081599011794_n.jpg?_nc_cat=110&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=4FffeObtjl4Q7kNvwHqvDro&amp;_nc_oc=Adq4WU-CAzErOacJTDqcXYW6dpyZ2afyj5I2NuVHX7CrymXsHTGvAbtLhNKLxx7H1sA&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af1s77u4q9RpQiGm4RCHIxqi3hlzDFdsr2H-SgJcRiMHgg&amp;oe=69DDA90E" controls preload="none"><source src="https://video.ffyv1-1.fna.fbcdn.net/o1/v/t2/f2/m86/AQNLhp10ETiY0NOp2OsKpcXk-0phwaHyGd6umYdKN91FrtXICMXIDEzggu3E2TCdj8GCSMCE4sMqaY08mYoJJ5Egrug1E2VmPiR7-C4.mp4?_nc_cat=105&amp;_nc_oc=AdphVeyJo6pQcpzCm-5QEqSd1w814CNsyP8TrEOHG2UyQ84Aew2XjGjdY0O68ALKjZw&amp;_nc_sid=5e9851&amp;_nc_ht=video.ffyv1-1.fna.fbcdn.net&amp;_nc_ohc=5bT96gqz2csQ7kNvwFC_eKG&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLmRhc2hfYmFzZWxpbmVfM192MSIsInhwdl9hc3NldF9pZCI6NzI4NTYyODk5NjM3MjM1LCJhc3NldF9hZ2VfZGF5cyI6Mjk2LCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MjIsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;vs=36787054597958eb&amp;_nc_vs=HBkcFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC8yMDQzMzkwOUEzRTJFNjAxREQ1N0ZGOUNDM0FEMUU5NV92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAm5s-izfinywIVAigCQzMsF0A2mZmZmZmaGBJkYXNoX2Jhc2VsaW5lXzNfdjERAHUAZeadAQA&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af3zVrvcrPkJdl3BAY5KQrNN6vTXDH3X3tZSpA02Z5TMSA&amp;oe=69D9D6AE" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/616051797_2370298896754625_5957558519030778259_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=103&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=CMBDBK8ap5kQ7kNvwHCF-OC&amp;_nc_oc=AdrJAi_n7nHFiBqXhYU0PjG1eJtImH3xTMQfVifbW4hs_ifZNEBzUb5oRayfPjDKksw&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af3Z2LOpaIIMX8ci-rRNoGi2ok4z1MNYxnYer7b-KX7H9A&amp;oe=69DDD320" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/bahestudioems/" target="_blank" rel="noopener" class="page-name">BAH Estúdio</a><div class="ad-sub"><span>FB · IG · AN · MS · WA</span><span>desde Jan/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=1206987557698603" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Bahhhh, se você nunca se encaixou em academias convencionais… a verdade é que o problema não é você. É o método, guria!!! 
+
+No Bah Estúdio EMS, você treina com tecnologia de ponta, foco absoluto em resultado e no seu tempo.
+📍 20 minutos por sessão
+🔥 Ganho real de massa magra
+💥 Emagrecimento com eficiência
+
+Sem multidões. Sem perda de tempo. Sem frustração.
+Se você nunca se encaixou em academias convencionais… a verdade é que o problema não é você. É o método.
+
+No Bah Estúdio EMS, você treina com tecnologia de ponta, foco absoluto em resultado e no seu tempo.
+📍 20 minutos por sessão
+🔥 Ganho rea</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/530593621_1492626691761009_1090022925052638378_n.jpg?_nc_cat=104&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=CHHWTGVJ0zgQ7kNvwEYK51r&amp;_nc_oc=Adr_ofdciai-qFHokajCg5SZyAGuAqq13mw9Y6nVbbFifR8XN80tgkXn82UOZFyslVI&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af3Yx0rBHpcfpB8HosjzgqG8B85h04y-nJRM04mEkSjH_g&amp;oe=69DDD09E" controls preload="none"><source src="https://video.ffyv1-1.fna.fbcdn.net/o1/v/t2/f2/m412/AQP8eUvIq7e2YOLVJPLx1ytY3VcyIuN8UuDs_UKj8lob8cFqRODAJ1YirpITHDI9SzruJykQ-jKHVAhq3tTrAH8eWN1O4NBgCRYtmzr2pA.mp4?_nc_cat=105&amp;_nc_oc=Adrs6UfcEMOmzimS3d7am7He9Wb78_3pMTUhxsXuSvYCGFXSmJ4SZaEiq9TgXUmYJeo&amp;_nc_sid=8bf8fe&amp;_nc_ht=video.ffyv1-1.fna.fbcdn.net&amp;_nc_ohc=L27ag0_fr5IQ7kNvwFCsX8G&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6NTMxMjIwOTgzMzgyMDkwLCJhc3NldF9hZ2VfZGF5cyI6MjQxLCJ2aV91c2VjYXNlX2lkIjoxMDc5OSwiZHVyYXRpb25fcyI6MzYsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af2VRJoU2C7Tse7jKWhe3tdIEaZka2-bkHOyAFhvSEZfaQ&amp;oe=69DDAC9D" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent.ffyv1-1.fna.fbcdn.net/v/t39.35426-6/530619720_733295316345994_2323473692636488195_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=105&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=Cmhxe_V69ioQ7kNvwEUxmRM&amp;_nc_oc=AdrF0kZZRPTuYkuPbwRe50Cuojl1yPgGendjIzYYvCljUDttyfx4GmWlsHJrrLLXxWo&amp;_nc_zt=14&amp;_nc_ht=scontent.ffyv1-1.fna&amp;_nc_gid=WW4_VC0h0bhLwhjehhLtCQ&amp;_nc_ss=7a389&amp;oh=00_Af3ULDOavet4f8fsqDkBI7TLpkOTbWpT-NKcksKh6K-zyg&amp;oe=69DDA7E3" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/bvfitwellness/" target="_blank" rel="noopener" class="page-name">BVFit Wellness</a><div class="ad-sub"><span>FB · IG · AN · MS · WA</span><span>desde Jan/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=25567412576219960" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">A BVfit não é para todo mundo. É para você, que busca um atendimento exclusivo, um ambiente sofisticado e a tecnologia mais avançada do mundo fitness. Nossos treinos de EMS são 100% personalizados para seus objetivos. ✨
+Sinta a exclusividade. Agende sua visita e transforme sua saúde com um toque de sofisticação.</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-lga3-3.xx.fbcdn.net/v/t39.35426-6/582434695_690892683756556_8845913412673459398_n.jpg?_nc_cat=106&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=l5n0jhgyChAQ7kNvwHvvPkg&amp;_nc_oc=AdrR3uaZobXabCPNXayynIUcV6-NjnLDzAfCCRviJi46KgR8Em8NAsdymBjkpfqly7s&amp;_nc_zt=14&amp;_nc_ht=scontent-lga3-3.xx&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;oh=00_Af1Pv_fAs1eZ2pkjp21hdj5ezxB_OypsEcJps0yoyvLWjg&amp;oe=69DDA4A5" controls preload="none"><source src="https://video-lga3-3.xx.fbcdn.net/o1/v/t2/f2/m86/AQO_uos0hPdMbnDkJqneiusXmJ8JhRusIA5xIM7thZ6Cw7Gz2z5aoqZTa57-Al-Ln2hVcGF4Ahev-SOmNbeN_ZOHeaF5kHSM0vnGfrY.mp4?_nc_cat=108&amp;_nc_sid=5e9851&amp;_nc_ht=video-lga3-3.xx.fbcdn.net&amp;_nc_ohc=qoyfqHi9JnwQ7kNvwFt6eId&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLmRhc2hfYmFzZWxpbmVfM192MSIsInhwdl9hc3NldF9pZCI6MTExMDQxNjY5NzkzNTQyMiwiYXNzZXRfYWdlX2RheXMiOjE3NywidmlfdXNlY2FzZV9pZCI6MTAwOTksImR1cmF0aW9uX3MiOjYwLCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&amp;ccb=17-1&amp;vs=6733acf2a58dcd19&amp;_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC9DMTQwMDdEN0U0RjQ1OTExQTM0MkIxNDQzNjFGQzVCNV92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYR2lnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC80MTc4NTIyNzI5MDU1MjM3Xzc5ODM2MDgzODc0NjUxNTgwMzgubXA0FQICyAESACgAGAAbAogHdXNlX29pbAExEnByb2dyZXNzaXZlX3JlY2lwZQExFQAAJvyYqo3h-vgDFQIoAkMzLBdATghysCDEnBgSZGFzaF9iYXNlbGluZV8zX3YxEQB1AGXmnQEA&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af3MbtTTEXYdzuTfkYxzIA6D9-CeCPED9NFO_uaeULXhdQ&amp;oe=69D9CB65" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-lga3-2.xx.fbcdn.net/v/t39.35426-6/582519763_1104315724922705_375250057546841456_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=101&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=1nO_Ni8koTwQ7kNvwE2GCMm&amp;_nc_oc=AdqeE8SmOGEaQJEnYvy4dNMzyz51N2plhtfXnKH7TSFeFXxJfZd3mYbD1mwKxsyl0Os&amp;_nc_zt=14&amp;_nc_ht=scontent-lga3-2.xx&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;oh=00_Af17q5sygQRENYBkhculgn5RLKOTwFNyNxJzParMfh7VYA&amp;oe=69DDBEB0" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/especialistadojoelho/" target="_blank" rel="noopener" class="page-name">Dr. Adriano Leonardi</a><div class="ad-sub"><span>FB · IG · AN · THREADS</span><span>desde Nov/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=1936128443625545" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Ficar na fisioterapia para sempre não é sinônimo de tratamento eficaz da ARTROSE.
+
+O verdadeiro objetivo vai muito além disso: aliviar a dor, recuperar função e devolver qualidade de vida.
+
+O processo começa com o controle da dor, muitas vezes por meio de infiltração.
+
+Depois, entra a ativação muscular com fisioterapia, que abre caminho para o passo mais importante: o fortalecimento contínuo, adaptado ao sexo, idade, grau da artrose e necessidades individuais.
+
+E o tratamento não para aí: cuidar das comorbidades como obesidade, colesterol alto, hipertensão e diabetes faz parte da jornada. Afin</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-lga3-1.xx.fbcdn.net/v/t39.35426-6/585353352_721582737651704_4597162648664433897_n.jpg?_nc_cat=110&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=D7kms4nT3bsQ7kNvwG7gJB4&amp;_nc_oc=AdoMu6WVlf6OIVbl2piIZFGJY93Kgi4iQ3YUzkjBfo3NbZssSrbNQGGu8_TymsUAwAk&amp;_nc_zt=14&amp;_nc_ht=scontent-lga3-1.xx&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;oh=00_Af15mTfnEarT8CO_-lkWr6exG5wtimiIk89HxyKbCbpQ6w&amp;oe=69DDD54F" controls preload="none"><source src="https://video-lga3-2.xx.fbcdn.net/o1/v/t2/f2/m412/AQPEKSYZUbzjHjBn4XASjNDoRYwEQMJUqxP9AJPhm2y-nZuP85-3jn90MKSnj0v-5n2fjZ8li2ckX2A7lFIqrU5n0HZ3MyMEVeoocn82Lw.mp4?_nc_cat=107&amp;_nc_sid=8bf8fe&amp;_nc_ht=video-lga3-2.xx.fbcdn.net&amp;_nc_ohc=PBlZ-hcu2oEQ7kNvwHuz4dr&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6NDA3NDIyMzMwOTU1NzU1NiwiYXNzZXRfYWdlX2RheXMiOjE0MSwidmlfdXNlY2FzZV9pZCI6MTA3OTksImR1cmF0aW9uX3MiOjQ0LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&amp;ccb=17-1&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af1KVTluygKd9nhfIch73XbDDtQeTpV0-KvhA8snQ3lbSw&amp;oe=69DDC3D7" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-lga3-1.xx.fbcdn.net/v/t39.35426-6/584593397_1528102858447438_6145105974854147063_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=103&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=EXGTH9hw1o0Q7kNvwGLsyv3&amp;_nc_oc=AdoMkbwkdyVkWFT1xZ20tNt83B4QtYKldrny036-8o2Ez0pu00iTL3FLD8qx8S0FlSM&amp;_nc_zt=14&amp;_nc_ht=scontent-lga3-1.xx&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;oh=00_Af3y84BfxYIwlM_vu3rNn8MRy9L8nAE5EnX93ZyLKWDp0g&amp;oe=69DDAA68" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/bodyloungeclaudiafachin/" target="_blank" rel="noopener" class="page-name">Body Lounge by Claudia Fachin</a><div class="ad-sub"><span>FB · IG · AN · MS</span><span>desde Nov/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=1358305229100211" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Você sabe como funciona um treino de eletroestimulação? 🦾⚡️
+
+O equipamento consiste em um colete de neoprene com eletrodos, que, por meio de estímulos elétricos, potencializa a contração muscular.
+
+O treino é baseado em 3 pilares essenciais:
+
+Tecnologia avançada
+Acompanhamento do professor
+Otimização de resultados
+
+Com apenas 20 minutos, você alcança resultados significativos, como aumento do tônus muscular, resistência e emagrecimento.</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-lga3-2.xx.fbcdn.net/v/t39.35426-6/539419237_1862756424287862_6035680234585527305_n.jpg?_nc_cat=107&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=K7NhsmNOoT0Q7kNvwH9EhU3&amp;_nc_oc=Ado2LqcmuUdJ6LecRZqTDEkPir7P3FPj8Zdg2VZ9yPJyK-WNuz04Sd5gkp0LJ5NKuXE&amp;_nc_zt=14&amp;_nc_ht=scontent-lga3-2.xx&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;oh=00_Af0We2gluR1PZXhHFzsFZnjrHkIbLv_u7wbGShKjyh8LDg&amp;oe=69DDA623" controls preload="none"><source src="https://video-lga3-1.xx.fbcdn.net/o1/v/t2/f2/m366/AQMXoOGsNPIFydyEzFXqkOJ_sZ-lEGYkIxbQsqAMCtnTCvs6fHLvQNsAymXl5qs5sJQEDzImoJUSucyk6AyvZXPYf5pVFii1E9jggq3-fA.mp4?_nc_cat=110&amp;_nc_sid=8bf8fe&amp;_nc_ht=video-lga3-1.xx.fbcdn.net&amp;_nc_ohc=ImIfBsL-gHcQ7kNvwEsoLOP&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6NzY1NDExNzk5NzUxOTY1LCJhc3NldF9hZ2VfZGF5cyI6MjI0LCJ2aV91c2VjYXNlX2lkIjoxMDc5OSwiZHVyYXRpb25fcyI6NTEsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af3-T0ssvtp2ww9SmhRGtDC-4yXnUxVLYcAjNIlOY5wd5w&amp;oe=69DDA4CC" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-lga3-3.xx.fbcdn.net/v/t39.35426-6/539261639_2182640328908561_7099136418740456097_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=102&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=9n36pfycmSgQ7kNvwErH5lj&amp;_nc_oc=AdrLrAATj1fmah6j8tn3xwDJLn5YUk65lEhp3XqzEO6zNFMDQh2wkIgcj6BfETng2ec&amp;_nc_zt=14&amp;_nc_ht=scontent-lga3-3.xx&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;oh=00_Af0QOqMRbyF_JrGG2IIhO9vQ7JJJYM0Hy8KD8Zr0hsuPUA&amp;oe=69DDB4F7" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/61576691703763/" target="_blank" rel="noopener" class="page-name">Juliana Conrado </a><div class="ad-sub"><span>IG</span><span>desde Dec/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=860050543191064" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Transforme seu corpo com o Ultra Shape!
+
+Tecnologia exclusiva que combina esteira a vácuo, infravermelho, eletroestimulação, lipocavitação e suporte nutricional para resultados visíveis em até 90 dias.
+
+🔥 Reduza medidas
+💪 Emagreça com saúde
+💖 Aumente sua autoestima
+
+Atendimento 100% personalizado e seguro.
+Agende agora sua avaliação e comece sua mudança!</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-lga3-1.xx.fbcdn.net/v/t39.35426-6/595069339_1392090025839908_5941494139817321324_n.jpg?_nc_cat=110&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=3KXo33t2jw8Q7kNvwElJGWD&amp;_nc_oc=AdoNMuiV7rNT_wDFUz0jnEKhyG31v0agFAH8hgN8KvITSL9Kfb6Wyo4D0GZcR4MH5H0&amp;_nc_zt=14&amp;_nc_ht=scontent-lga3-1.xx&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;oh=00_Af03gsYFKgPYVD5J2-JKcFU2Nhh2y7Fze9cB6QaGPSTZlQ&amp;oe=69DDBE85" controls preload="none"><source src="https://video-lga3-2.xx.fbcdn.net/o1/v/t2/f2/m86/AQPtG0tPFSVi0at40MuXY6Gxk6wUyA8LOgq2_YsB8hHVvBSAeJi7egyykjOytDahr2ARCX_CxBrcoiV1IQuceZ7mHlMsHwtXwIJ0sIA.mp4?_nc_cat=107&amp;_nc_sid=5e9851&amp;_nc_ht=video-lga3-2.xx.fbcdn.net&amp;_nc_ohc=Ilc-4Cv3VN0Q7kNvwHqZWiI&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLmRhc2hfYmFzZWxpbmVfM192MSIsInhwdl9hc3NldF9pZCI6MTI4MDY5Njg1NDA3NjQ3NywiYXNzZXRfYWdlX2RheXMiOjExOSwidmlfdXNlY2FzZV9pZCI6MTAwOTksImR1cmF0aW9uX3MiOjQ2LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&amp;ccb=17-1&amp;vs=ada6ca2dcf64945b&amp;_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC9DMDQxODhCNkE3NzAxNkRBMkIwMjMyNDIzMzE4NjhBNF92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYRmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC85MTQ0MTY5Njc5MjM5NzlfNzg4NzA3ODYxMzMyMzc3NzM0OS5tcDQVAgLIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAm-vDqkK-yxgQVAigCQzMsF0BHZmZmZmZmGBJkYXNoX2Jhc2VsaW5lXzNfdjERAHUAZeadAQA&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af1rzP4QjoyEqANNT2jJ9Sv5wtbJbTiWi0gdquLj5H11_Q&amp;oe=69D9B940" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-lga3-2.xx.fbcdn.net/v/t39.35426-6/597565972_1909048923049685_9216908853991218391_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=101&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=AqFIBLemoMQQ7kNvwGbYRQ5&amp;_nc_oc=AdpxA9wKTwzkreeo3uY05LcsFiKhXrtFu0kZImuSeGQOP61CJg1ZQu9Az52qHF5_Z2A&amp;_nc_zt=14&amp;_nc_ht=scontent-lga3-2.xx&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;oh=00_Af1nvUT5wHzR0wqihCbBGvO-SkkxbTOs_4pD0Xv2tOpz6A&amp;oe=69DDA6F5" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/61566334965544/" target="_blank" rel="noopener" class="page-name">House Slim Clinic</a><div class="ad-sub"><span>IG</span><span>desde Dec/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=1553819445754775" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Aqui, cada minuto do seu treino vale por muitos.🕠
+
+A eletroestimulação faz o corpo trabalhar várias cadeias musculares ao mesmo tempo, elevando o gasto energético.
+
+O InfraShape Horizontal combina pedalar deitado com infravermelho e vácuo, acelerando a queima e melhorando circulação.
+
+E o BodyShape dá aquele empurrão no metabolismo, ajudando a modelar e reduzir gordura de forma inteligente.
+
+No final, é simples: você treina menos tempo e queima muito mais. É performance. É estratégia. É inteligência a favor do seu resultado.
+
+Se você quer emagrecer de maneira eficiente e otimizar o seu dia, es</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-lga3-2.xx.fbcdn.net/v/t39.35426-6/579606911_1561071758397578_7902177685575976832_n.jpg?_nc_cat=107&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=-gm7WLIv7bMQ7kNvwF0g93G&amp;_nc_oc=AdqXqGaBEwB0sAaCIEVSfiMpzvrtGt3Z03cEWgQQdIKAWDnAwYhyfO2UtsjpvQ6gvmI&amp;_nc_zt=14&amp;_nc_ht=scontent-lga3-2.xx&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;oh=00_Af1edvTSZ_W1YyE1IJhuKYfVK75Ooap9IWdcal087wBG3Q&amp;oe=69DDAE4F" controls preload="none"><source src="https://video-lga3-2.xx.fbcdn.net/o1/v/t2/f2/m86/AQO9dWR-mIV4hJgEsNmTwxdSrTg2xkEpF8f-zFZolT12yP2Z6Fq3bs0eCkeSHF9gc1hYbJ9d_u1v87gLqcAJMMPftYvO0Hfi28ttgDU.mp4?_nc_cat=100&amp;_nc_sid=5e9851&amp;_nc_ht=video-lga3-2.xx.fbcdn.net&amp;_nc_ohc=TOx5-4RrKloQ7kNvwE3jTyA&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLmRhc2hfYmFzZWxpbmVfM192MSIsInhwdl9hc3NldF9pZCI6MzE3OTI4MjkyNTU4MDQ4NSwiYXNzZXRfYWdlX2RheXMiOjI2MCwidmlfdXNlY2FzZV9pZCI6MTAwOTksImR1cmF0aW9uX3MiOjI0LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&amp;ccb=17-1&amp;vs=b57907fb1861b9f1&amp;_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC82QTQ5RjU2ODA4QjQzNjkwMDg1QzNCODcxNjkyN0I4Q192aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYR2lnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC80MjQ0NTM2MTMyNDg2NjA0XzI3MzI5NjU2OTc3ODA4NDI5MDIubXA0FQICyAESACgAGAAbAogHdXNlX29pbAExEnByb2dyZXNzaXZlX3JlY2lwZQExFQAAJorD29bP4qULFQIoAkMzLBdAOIhysCDEnBgSZGFzaF9iYXNlbGluZV8zX3YxEQB1AGXmnQEA&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af317rJPTC-RFcMozgP95uidoiwdNBoXM6XmvPq0q1fkoA&amp;oe=69D9D6E9" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-lga3-1.xx.fbcdn.net/v/t39.35426-6/580780765_817691837719158_5844585866064043189_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=110&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=7oAX5uGZ2KwQ7kNvwHwmWcB&amp;_nc_oc=AdrR6IeSDlV0gIwi_RMgkzsFcjEhZTZPOyTtEm3lzqxzNeb_ZnPIhX11bznmvzUu2O8&amp;_nc_zt=14&amp;_nc_ht=scontent-lga3-1.xx&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;oh=00_Af3jmMB_fpTbARwCMN5uO_DUYbdmVQHaeoXKZYbNVqQCxQ&amp;oe=69DDB44B" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/clinicauirtus/" target="_blank" rel="noopener" class="page-name">Clínica Uirtus</a><div class="ad-sub"><span>IG</span><span>desde Nov/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=1227822019181996" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">💥 Treino rápido, intenso e com resultado real!
+Com o método Eletro Ellite, você conquista hipertrofia muscular e emagrecimento com apenas 2 treinos por semana de 30 minutos.
+
+✔️ Alta tecnologia
+✔️ Eletroestimulação de última geração
+✔️ Resultados visíveis em poucas semanas
+✔️ Sem impacto nas articulações
+
+💪 Mais definição.
+📉 Menos gordura.
+⏱️ Mais tempo pra você.
+
+Chegou o momento de treinar diferente.
+Chegou o Eletro Ellite.
+
+📍 Atendimento na Clínica Uirtus</div></div></div>
+<div class="ad-card"><div class="ad-media"><img src="https://scontent-lga3-1.xx.fbcdn.net/v/t39.35426-6/506005135_702293349061466_5548449323910152154_n.jpg?stp=dst-jpg_s600x600_tt6&amp;_nc_cat=103&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=Hq1OGCLtw4EQ7kNvwEaoI6R&amp;_nc_oc=AdqUHWZT4JhgQTiWXeVOvhA1qDKdO6tlD7KXzYUwOwJoBQlEHJ0lQ7MANLUbqAZPFC0&amp;_nc_zt=14&amp;_nc_ht=scontent-lga3-1.xx&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;oh=00_Af1oNK0uaqjyKO8egSGdiLTIQ1OzSWUbxS4ci2-V0tTpbQ&amp;oe=69DDCF85" alt="Studio Pro Pulse Macaé" loading="lazy" /></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-lga3-3.xx.fbcdn.net/v/t39.35426-6/505865215_2225340064589821_9032759242920032087_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=102&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=k78Dq8DsGN0Q7kNvwFRciIB&amp;_nc_oc=AdoR2k-9pZeMEY2dRg24bv9mdqEzXnVCuaaXI2YGPomZIbckbufrfzcwc6_9aWmbdv0&amp;_nc_zt=14&amp;_nc_ht=scontent-lga3-3.xx&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;oh=00_Af30v8GTz1N_iqgaRccmX_ypg7FfriS7j3K9H_YMkkzcHw&amp;oe=69DDA53C" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/100086921594920/" target="_blank" rel="noopener" class="page-name">Studio Pro Pulse Macaé</a><div class="ad-sub"><span>FB · IG · AN · MS</span><span>desde Sep/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=1944023789664337" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">⏱️ Sem tempo para academia, mas quer emagrecer?
+
+Nós entendemos você! No Studio Pro Pulse!
+Oferecemos treinos rápidos e eficazes com tecnologia de eletroestimulação muscular — perfeitos para quem tem a agenda cheia, mas não abre mão da saúde e boa forma.
+
+🔥 Resultados reais em menos tempo
+⏱️ Sessões de apenas 20 minutos
+💪 Emagrecimento e tonificação com inovação
+
+👉 Agende agora sua aula experimental gratuita e sinta a diferença!</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-lga3-1.xx.fbcdn.net/v/t39.35426-6/524128073_2492609871105679_6088575707889422370_n.jpg?_nc_cat=110&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=v24bB714nVUQ7kNvwHgoxj7&amp;_nc_oc=AdpxqKwGT0CWKs9nrZSQ8brh01P4jnqN3PUCLoh7R6EhFycvi8H95_7oPPQnjzh84wA&amp;_nc_zt=14&amp;_nc_ht=scontent-lga3-1.xx&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;oh=00_Af2dz8YheyMudlmrN3CytkCLuWqK4NHMlRQoFI73jASWaA&amp;oe=69DDD174" controls preload="none"><source src="https://video-lga3-2.xx.fbcdn.net/o1/v/t2/f2/m412/AQPCGkHm8uvJ3NPpqlYKyf3Es-0P65UbbYY9bADfRibijKPuPhoSB5heH6_s7DkeTYpY6UNZeHT2k6wIp_HssTYB_K6M0V6_tBZ0RmOmaA.mp4?_nc_cat=101&amp;_nc_sid=8bf8fe&amp;_nc_ht=video-lga3-2.xx.fbcdn.net&amp;_nc_ohc=vWWw4xGdiNMQ7kNvwHFgEFX&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6MTMwODY5NDU3NDMwMDAzOCwiYXNzZXRfYWdlX2RheXMiOjI1OSwidmlfdXNlY2FzZV9pZCI6MTA3OTksImR1cmF0aW9uX3MiOjE1MCwidXJsZ2VuX3NvdXJjZSI6Ind3dyJ9&amp;ccb=17-1&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af1FupaqtTtUjSAM1nLtLXLeEppKLlnUWuPQcJYzX1N0Jg&amp;oe=69DDC74D" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-lga3-3.xx.fbcdn.net/v/t39.35426-6/520595928_1272469827692905_6860148064196736103_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=108&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=T8_WQjypwWAQ7kNvwGbJVxB&amp;_nc_oc=AdqJ_pxc2uEo0rnGPJYjcKEa-AoZTHDbI_FtdWdttxIlEcwoObjDgUgxwbhEJ0BMV7I&amp;_nc_zt=14&amp;_nc_ht=scontent-lga3-3.xx&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;oh=00_Af1n0mT6QyraIZe--JXwENvByiDcvfnB4j0yvEbEnszCVg&amp;oe=69DDA61D" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/DraCamilaNigro/" target="_blank" rel="noopener" class="page-name">Dra. Camila Nigro</a><div class="ad-sub"><span>IG</span><span>desde Aug/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=1550164316364067" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Remova sua tatuagem com Sofisticação e Tecnologia Avançada ✨
+
+Sua pele merece o melhor. Na Clínica Dra. Camila Nigro, combinamos tecnologia de ponta, segurança e expertise médica para remover sua tatuagem com máxima eficácia e mínimo desconforto.
+
+💎 Laser de última geração – Procedimento seguro, preciso e com resultados visíveis.
+💎 Experiência premium – Atendimento exclusivo e personalizado para você.
+💎 Sem marcas indesejadas – Tecnologia que preserva a beleza natural da sua pele.
+
+Redescubra sua pele com o padrão de excelência que você merece.
+
+📅 Agende sua avaliação exclusiva agora!</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-lga3-3.xx.fbcdn.net/v/t39.35426-6/653842086_1922455185811813_1203757616276894901_n.jpg?_nc_cat=104&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=VsDOu7SaCw8Q7kNvwHn3Xic&amp;_nc_oc=Ado4yjaJ9bv86WylUMg876fwDTVhDF7YqbxpRcSZvOJvqryV0z6N8gOOJZjEY7eGlDo&amp;_nc_zt=14&amp;_nc_ht=scontent-lga3-3.xx&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;oh=00_Af3WuNfAG7l8cUsu9KL3kgSRuOeS9YNN-geSKagvMzC3Vg&amp;oe=69DDD561" controls preload="none"><source src="https://video-lga3-1.xx.fbcdn.net/o1/v/t2/f2/m412/AQN1ug68WbXSezEUCg8EUGOLWZIJ2N1Tg3UvgsxKQE2YCMStIwL7jjIClf2BfuqUn-EpLLlXlCJ8URW-ZtdQj0kimK8dYtxqwbZ5NaWf5Q.mp4?_nc_cat=110&amp;_nc_sid=8bf8fe&amp;_nc_ht=video-lga3-1.xx.fbcdn.net&amp;_nc_ohc=qYxfewC3fVcQ7kNvwHZDU5g&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6MTk5OTQ2ODA0MDU5NzMwNywiYXNzZXRfYWdlX2RheXMiOjc4LCJ2aV91c2VjYXNlX2lkIjoxMDc5OSwiZHVyYXRpb25fcyI6MzIsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af2WYiq1yyseMxKeYTnSfZ2v16BDTaYF4NjXKEUvIQWSQw&amp;oe=69DDC95C" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-lga3-1.xx.fbcdn.net/v/t39.35426-6/654377295_796770046358374_3397758968588866884_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=109&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=6trezhXHm8oQ7kNvwED5yLa&amp;_nc_oc=AdpslQy-j0vYoTbmKeSz5Fy1epKvBNsE2X8J6abNWgsPg7TgLEtg6YTetjop0OPgvd4&amp;_nc_zt=14&amp;_nc_ht=scontent-lga3-1.xx&amp;_nc_gid=Zeb8mMk7oqlmRsyOlEZlYA&amp;_nc_ss=7a389&amp;oh=00_Af0gtYgFL_eKnUlk7pszpswxkBlQdfLxZZ5C9e5xKrG--A&amp;oe=69DDC46E" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/61567474282522/" target="_blank" rel="noopener" class="page-name">Ampère São Carlos</a><div class="ad-sub"><span>FB · IG · WA</span><span>desde Feb/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=677382105400587" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Seu corpo pede equilíbrio.
+Na Ampère, você encontra o melhor dos dois mundos: Pilates + Eletroestimulação.
+Fortaleça, alivie dores e ganhe qualidade de vida com aulas que cabem na sua rotina!
+👉 Comece agora!</div></div></div>
+<div class="ad-card"><div class="ad-media"><img src="https://scontent-iad3-1.xx.fbcdn.net/v/t39.35426-6/627378223_921627287463877_1197979791372890639_n.jpg?stp=dst-jpg_s600x600_tt6&amp;_nc_cat=108&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=hqVouxAki8wQ7kNvwHDA5pY&amp;_nc_oc=Adp_tCUzYOKkS-KRujNMbLQzl9FSoKXRruGSWoqj9fZgzVkEmRJem4yH3F2xrNymsnA&amp;_nc_zt=14&amp;_nc_ht=scontent-iad3-1.xx&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;oh=00_Af3ex_tiwT6MAmOUp5TEEPZnbCqn6g2O4NREiJbdfn_lCg&amp;oe=69DDBBE4" alt="PulseLab Leblon" loading="lazy" /></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-iad3-1.xx.fbcdn.net/v/t39.35426-6/627432353_1204437358528002_7841170083101466774_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=110&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=8vBuRVA8do0Q7kNvwHHkUHC&amp;_nc_oc=AdotFHHMdzuA6gkWwBOMl90J-XtvdGHk5FuqBQyDqP6v7ylsO1rWl5BYAqU8-hcz-ug&amp;_nc_zt=14&amp;_nc_ht=scontent-iad3-1.xx&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;oh=00_Af32pXNKwdKsJVxjXIvjyU1HJQ6IKKpgiL0GmzkipUBx3Q&amp;oe=69DDB227" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/pulselableblon/" target="_blank" rel="noopener" class="page-name">PulseLab Leblon</a><div class="ad-sub"><span>FB · IG · AN · MS · WA</span><span>desde Feb/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=2685987938419565" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">🔥 Leblon, atenção! 🔥
+Quer emagrecer ou ganhar massa muscular sem perder horas na academia?
+
+Na PulseLab, você treina apenas 20 minutos e já conquista resultados incríveis — com acompanhamento profissional e tecnologia de ponta.
+
+✅ Emagrecimento
+✅ Hipertrofia
+✅ Treino rápido e eficiente
+
+👉 Garanta agora sua aula e sinta a diferença!</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-iad3-2.xx.fbcdn.net/v/t39.35426-6/622842147_1996184107609158_2913869589294229376_n.jpg?_nc_cat=111&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=tvdui1Fl77gQ7kNvwFZ6LI7&amp;_nc_oc=AdpV51W08nWpZtv6wrQSfGszCj69I7j2_GEICZSckk9JLjBop44BUlJZ0pZwFz5GMHc&amp;_nc_zt=14&amp;_nc_ht=scontent-iad3-2.xx&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;oh=00_Af2hsW36fsXeagTlOcPrwzKqTTns1M05X0iH-08mn9l0JA&amp;oe=69DDC319" controls preload="none"><source src="https://video-iad3-1.xx.fbcdn.net/o1/v/t2/f2/m69/AQNHhf1adwFZfl7QV8zQqmQ2kXwvJJm9AeOZUKjLpaAUQ-V5FTbKWuovJslZT5d1VuXpuAu18Rl_zRCpkGrlWA9H.mp4?strext=1&amp;_nc_cat=101&amp;_nc_sid=8bf8fe&amp;_nc_ht=video-iad3-1.xx.fbcdn.net&amp;_nc_ohc=XQEhVc8X0P4Q7kNvwEIv1vN&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6MTAxNjE4Njc3NzMyNTk0NCwiYXNzZXRfYWdlX2RheXMiOjMxNSwidmlfdXNlY2FzZV9pZCI6MTA3OTksImR1cmF0aW9uX3MiOjM0LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&amp;ccb=17-1&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af0EMcFVcdmuGyh8d36E7ru7M_wxsmZtbRLDG_edMbV5bA&amp;oe=69DDAA55" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-iad6-1.xx.fbcdn.net/v/t39.35426-6/618174885_1615138162958537_7891429148324810004_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=102&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=CZ7KG70C5C8Q7kNvwF9Czn-&amp;_nc_oc=AdpKtZcWinfhLo40jYYa9fT9N1Wdql1aIT4hn_hcWBsqBh051xFxzNjQiNY_-s8lTo8&amp;_nc_zt=14&amp;_nc_ht=scontent-iad6-1.xx&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;oh=00_Af14pI-udzDQh1taZago--XPVu9mRM6boHWuSFtVPgxUvg&amp;oe=69DDC7DE" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/61576691703763/" target="_blank" rel="noopener" class="page-name">Juliana Conrado </a><div class="ad-sub"><span>FB · IG · MS</span><span>desde Feb/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=1563818068160392" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Transforme seu corpo com o Ultra Shape!
+
+Tecnologia exclusiva que combina esteira a vácuo, infravermelho, eletroestimulação, lipocavitação e suporte nutricional para resultados visíveis em até 90 dias.
+
+🔥 Reduza medidas
+💪 Emagreça com saúde
+💖 Aumente sua autoestima
+
+Atendimento 100% personalizado e seguro.
+Agende agora sua avaliação e comece sua mudança!</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-iad6-1.xx.fbcdn.net/v/t39.35426-6/466763761_1802591497157861_3565850944933350290_n.jpg?_nc_cat=106&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=pmj1Fhbz978Q7kNvwEpnXGD&amp;_nc_oc=AdqCf1UUQO9GWorrd3e48agNPuA6wR4eN8v1ubgrxfxZu5bKM4OdYOZh4YBy0dC_V9c&amp;_nc_zt=14&amp;_nc_ht=scontent-iad6-1.xx&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;oh=00_Af1nJCG-WgryHyhmIVVUBmunUfO2-jZC9JEadNUONr-FLg&amp;oe=69DDD356" controls preload="none"><source src="https://video-iad3-2.xx.fbcdn.net/o1/v/t2/f2/m69/AQPDNlfdCKHLqr_8e4F0Yl03iJze-1KLscM7TvId-diuihP5bNIU1JY6fee7WyCp573knhrTw_NQE_h21xxQVA71.mp4?strext=1&amp;_nc_cat=111&amp;_nc_sid=8bf8fe&amp;_nc_ht=video-iad3-2.xx.fbcdn.net&amp;_nc_ohc=cqxeR_Z0c80Q7kNvwE-iCXJ&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6NDI5Nzc1MDI5NjExMDkyLCJhc3NldF9hZ2VfZGF5cyI6NzQ0LCJ2aV91c2VjYXNlX2lkIjoxMDEwMSwiZHVyYXRpb25fcyI6MzgsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af11xQa-GndAAinVdxoFeWL_w2EzC5CtftPdrfTALsuXbA&amp;oe=69DD9FCF" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-iad6-1.xx.fbcdn.net/v/t39.35426-6/466725876_1105552333735089_7704395285568306700_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=102&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=nj5m0XIELf4Q7kNvwEdG7NG&amp;_nc_oc=Adqri-rkfTMIO4m5oyTCCNYKFbb6sShzs4qeTaChceVdZteR4xprf4WpfXqPqi-ikxA&amp;_nc_zt=14&amp;_nc_ht=scontent-iad6-1.xx&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;oh=00_Af0kzqqcm7tJIRWgkDJ8_04zKltJXERWtZ2pchkuqAMKbg&amp;oe=69DDB6F5" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/institutodadoratibaia/" target="_blank" rel="noopener" class="page-name">Instituto da Dor Atibaia</a><div class="ad-sub"><span>FB · IG</span><span>desde Nov/2024</span></div></div><a href="https://www.facebook.com/ads/library/?id=778652804399074" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Entenda como a Eletroestimulação pode ser utilizada tanto na reabilitação quanto nos programas de fortalecimento e emagrecimento!
+
+@institutodadordeatibaia 
+@dr_leandro_pereira 
+@ale_fisio22 
+
+📍Rua Dr. José Ferreira Keffer,58. Vila Helena. Atibaia/SP
+📲 (11) 95656 1747</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-iad6-1.xx.fbcdn.net/v/t39.35426-6/466733248_8654658151255839_8822197073472868105_n.jpg?_nc_cat=106&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=lDRNaXmDwd4Q7kNvwH3Awgj&amp;_nc_oc=Adru3nsOSbcQXaTy2wn4IUosWWoOsww41HLhhmU40R5LCGtmAusuqnXWLJIg_KhhFmk&amp;_nc_zt=14&amp;_nc_ht=scontent-iad6-1.xx&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;oh=00_Af2TsrT16-5bPdAy97bmWliFysH2ciS5x8Vk0laFvbOL_g&amp;oe=69DDB890" controls preload="none"><source src="https://video-iad3-2.xx.fbcdn.net/o1/v/t2/f2/m69/AQPDNlfdCKHLqr_8e4F0Yl03iJze-1KLscM7TvId-diuihP5bNIU1JY6fee7WyCp573knhrTw_NQE_h21xxQVA71.mp4?strext=1&amp;_nc_cat=111&amp;_nc_sid=8bf8fe&amp;_nc_ht=video-iad3-2.xx.fbcdn.net&amp;_nc_ohc=cqxeR_Z0c80Q7kNvwE-iCXJ&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6NDI5Nzc1MDI5NjExMDkyLCJhc3NldF9hZ2VfZGF5cyI6NzQ0LCJ2aV91c2VjYXNlX2lkIjoxMDEwMSwiZHVyYXRpb25fcyI6MzgsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af11xQa-GndAAinVdxoFeWL_w2EzC5CtftPdrfTALsuXbA&amp;oe=69DD9FCF" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-iad3-1.xx.fbcdn.net/v/t39.35426-6/466789948_1267320941261974_437233764179977190_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=110&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=p3TI9dzbNn4Q7kNvwEEuonv&amp;_nc_oc=Adqoh9ENslP-4wsRlP1J8rdnOjOH4X0nRo_Ai7wttEcmKUnR4AF74IJY5zOxW4GJPNM&amp;_nc_zt=14&amp;_nc_ht=scontent-iad3-1.xx&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;oh=00_Af1H-VPc2lTSE3tr5N8lrJ8ZYp6wRtFh7f9FDWUZLtenRg&amp;oe=69DDC807" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/institutodadoratibaia/" target="_blank" rel="noopener" class="page-name">Instituto da Dor Atibaia</a><div class="ad-sub"><span>FB · IG</span><span>desde Nov/2024</span></div></div><a href="https://www.facebook.com/ads/library/?id=577226631344248" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Entenda como a Eletroestimulação pode ser utilizada tanto na reabilitação quanto nos programas de fortalecimento e emagrecimento!
+
+@institutodadordeatibaia 
+@dr_leandro_pereira 
+@ale_fisio22 
+
+📍Rua Dr. José Ferreira Keffer,58. Vila Helena. Atibaia/SP
+📲 (11) 95656 1747</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-iad6-1.xx.fbcdn.net/v/t39.35426-6/632546741_884400307906505_1902951439751331847_n.jpg?_nc_cat=100&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=SvEsG8xVt20Q7kNvwEO7nQL&amp;_nc_oc=AdrPlhAeGjiKZeqJSd71NMK1csQ906F6Kwj9m5zEAk6nW-M1TtWDlcHv3xx7J_B_el0&amp;_nc_zt=14&amp;_nc_ht=scontent-iad6-1.xx&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;oh=00_Af1TWs2ESA7ghTGD2i-jeLTGNGzXX7J7ZT6aIkDnuE-CFg&amp;oe=69DDA2E6" controls preload="none"><source src="https://video-iad3-2.xx.fbcdn.net/o1/v/t2/f2/m412/AQNRqziQfA55a0Nez-daTbwaWm8WM_k2BGtB8tUqX5z717h3PAdGxVczSq5ajhDIg-5SovSAvQb0LJzIZeJH7RtJDpJw40HDbtHrohjzTA.mp4?_nc_cat=111&amp;_nc_sid=8bf8fe&amp;_nc_ht=video-iad3-2.xx.fbcdn.net&amp;_nc_ohc=oUxd74jU7k0Q7kNvwG37TT2&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6MTc5MDY3ODkxMTg4ODUyOCwiYXNzZXRfYWdlX2RheXMiOjU2LCJ2aV91c2VjYXNlX2lkIjoxMDc5OSwiZHVyYXRpb25fcyI6NDUsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af1XnmhD2OsomwGn7y0o6KeRcay9JGPxypepuuvxlKsTgA&amp;oe=69DDCC0F" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-iad6-1.xx.fbcdn.net/v/t39.35426-6/631938893_2023255471566799_5590071162098757644_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=100&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=yXKAzNA_ClEQ7kNvwFMlkfi&amp;_nc_oc=AdrCXiuMF_lT0gxFVJoo7Dw9hVM_WCdfvjZZg3rhLeOd-715XCszK-W7fyKL5kgysSk&amp;_nc_zt=14&amp;_nc_ht=scontent-iad6-1.xx&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;oh=00_Af0kXpfm27T6UF0m0GOv3wom39xqVf1Yc_6NB7GBNGehsw&amp;oe=69DDAB71" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/61558701896067/" target="_blank" rel="noopener" class="page-name">Instituto Bruno Moura</a><div class="ad-sub"><span>FB · IG · AN</span><span>desde Feb/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=1991191138277423" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Onde a sua nutrição encontra a tecnologia de elite.
+
+Aqui no Instituto Bruno Moura, você encontra as melhores tecnologias para transformar seu esforço em resultado real. Criamos um ambiente de elite, onde cada detalhe foi pensado para potencializar sua queima calórica e dar o suporte necessário ao seu planejamento nutricional.
+
+Descubra o novo padrão de emagrecimento. Venha conhecer o Instituto Bruno Moura 👉</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-iad3-2.xx.fbcdn.net/v/t39.35426-6/647066028_794101250403478_1064375713723600968_n.jpg?_nc_cat=105&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=ABs7psr04uwQ7kNvwFbDQYy&amp;_nc_oc=AdrhpBqxGB_cvnJjwzfz7ggfHLrzSOWxbK8_kjzuT7sGnnEqQECoFqYq8XMt16IjHq4&amp;_nc_zt=14&amp;_nc_ht=scontent-iad3-2.xx&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;oh=00_Af3QGcLmD92liOMKJMck1XrgtKC1jerFeHrqCSGyAnG7fw&amp;oe=69DDC196" controls preload="none"><source src="https://video-iad6-1.xx.fbcdn.net/o1/v/t2/f2/m367/AQMgsHbIuI3_UF_LwuglG4YAG05RAcKbBfoCOBMXMMorKha3GnPocUcG27HuvMSRa5yTMVVAgjk7xojzMHbLsrMlOdXZc2pk3FUJTt9EKw.mp4?_nc_cat=102&amp;_nc_sid=8bf8fe&amp;_nc_ht=video-iad6-1.xx.fbcdn.net&amp;_nc_ohc=2-9FpB5WAAIQ7kNvwEZ2U7Q&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnByb2dyZXNzaXZlX2gyNjQtYmFzaWMtZ2VuMl8zNjBwIiwieHB2X2Fzc2V0X2lkIjoxNzg2Njc3NDE2NzU3NzQwNiwiYXNzZXRfYWdlX2RheXMiOjQyLCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6NjYsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&amp;ccb=17-1&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af1xeGMBzXhGduQiA0bjNOY5IOKZQlSzQIkRV5f9kpvhVA&amp;oe=69DDBFD0" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-iad6-1.xx.fbcdn.net/v/t39.35426-6/646123151_25959726790378637_8255043152151508116_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=102&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=WK8IvodHkMcQ7kNvwH-mcrq&amp;_nc_oc=Adr-G7pCfhMa4iOSPSrMMEI_3ofSa54_AAVATCNVQ8N3nKtTxsi9J4Md0grC9YiWTYs&amp;_nc_zt=14&amp;_nc_ht=scontent-iad6-1.xx&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;oh=00_Af0lY75FndoJLQHmHh1EIvLm9NCtOEDyHVpXlNuueVS9Lg&amp;oe=69DDB76D" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/100069079862384/" target="_blank" rel="noopener" class="page-name">Estética Cuidare</a><div class="ad-sub"><span>IG</span><span>desde Mar/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=1537727767292024" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Você sabia que é possível contrair seus músculos 40x mais do que em um treino comum? 🤯
+
+Esse é o EZBODY um método de eletroestimulação muscular de alta intensidade focado em emagrecimento, definição e redução de gordura localizada.
+
+Ele trabalha fundo nos músculos, aumentando sua massa magra e acelerando o metabolismo de forma eficiente.
+
+Fica até o final do vídeo, vale muito a pena! 🎯</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent-iad3-1.xx.fbcdn.net/v/t39.35426-6/643892747_2988383718219009_8541627017443662507_n.jpg?_nc_cat=101&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=ndYOZSlqUksQ7kNvwE7sCjz&amp;_nc_oc=AdqCyl-aFpP7f7cOTTqLPatxldlipUkIInkOP1IBjgGbfTK54w2spq04s2sxIZ8eJ5c&amp;_nc_zt=14&amp;_nc_ht=scontent-iad3-1.xx&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;oh=00_Af1EyQ4L6E-EaxomllOzZIMGMOIegzAXfKQHcPv00e8qmA&amp;oe=69DDCA8F" controls preload="none"><source src="https://video-iad6-1.xx.fbcdn.net/o1/v/t2/f2/m412/AQO3xOHj85NjBpr651ag03nBZYHrUs_Nhj87hCpkJsYCvSM_UlPnv9k1XtL8suEJuBEANoPcFWc5BukvgIBohpunFDxRgNVwJrI3aWuKFQ.mp4?_nc_cat=107&amp;_nc_sid=8bf8fe&amp;_nc_ht=video-iad6-1.xx.fbcdn.net&amp;_nc_ohc=eSt7oJ3IPy8Q7kNvwGH_dLv&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6OTIxNzU0MjgwMzE3MDk1LCJhc3NldF9hZ2VfZGF5cyI6NDQsInZpX3VzZWNhc2VfaWQiOjEwNzk5LCJkdXJhdGlvbl9zIjo0MywidXJsZ2VuX3NvdXJjZSI6Ind3dyJ9&amp;ccb=17-1&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af0LucQvw8lmcKITTmorJJ53uESiJOqAjYY_ft0_QJq7rg&amp;oe=69DDBA8B" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent-iad6-1.xx.fbcdn.net/v/t39.35426-6/642293653_1992920947959133_1732399248898267148_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=107&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=XOAnhaNQC-cQ7kNvwHJEZPZ&amp;_nc_oc=Adq799c-DCnZbBmouZqlE5WcbNL3MyKVg9xUjB3Fen8xp5gGbZdSDnwY3vyUq2vggxQ&amp;_nc_zt=14&amp;_nc_ht=scontent-iad6-1.xx&amp;_nc_gid=qfz6FDYUNPlGyGx6UvFqYw&amp;_nc_ss=7a389&amp;oh=00_Af11uFRnSSvUlGMnr1uAIHhPTzPzcRuuWX-HrqmEq8rI0A&amp;oe=69DDAE18" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/61560997860592/" target="_blank" rel="noopener" class="page-name">Ale Barros Concept</a><div class="ad-sub"><span>FB · IG · WA</span><span>desde Feb/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=34021364010844731" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Cansada de treinar e sentir que o seu corpo estagnou? Ou pior: emagreceu, mas a flacidez e a falta de contorno te impedem de usar a roupa que você quer? 👗❌
+
+Conheça o EZBody, a tecnologia que está revolucionando a estética avançada aqui no Santa Amélia. Diferente de tudo o que você já viu, o EZBody combina eletroestimulação profunda com movimentos estratégicos para:
+
+✅ Tonificar músculos que a academia demora meses para atingir.
+✅ Modelar o contorno corporal (abdômen, glúteos e pernas).
+✅ Recuperar a firmeza da pele pós-emagrecimento.
+✅ Otimizar seu tempo: resultados de alta performance em ses</div></div></div>
+<div class="ad-card"><div class="ad-media"><video poster="https://scontent.fbey14-1.fna.fbcdn.net/v/t39.35426-6/585388930_832011676350073_1413437847137499230_n.jpg?_nc_cat=100&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=F-hq4S34VtwQ7kNvwG2g9uC&amp;_nc_oc=Adq_b6RxISqjvacNz5_ygw9iXxbHqrXzLYDXHiiRlVK7SihtD7RsFROpChPntOq7eHw&amp;_nc_zt=14&amp;_nc_ht=scontent.fbey14-1.fna&amp;_nc_gid=CgTC2zNKtaO3FkeumN6VKQ&amp;_nc_ss=7a389&amp;oh=00_Af2wWfoq0WTSpVg0vo9ug6_ICwcOL4SGHcAjskjxsEwfrA&amp;oe=69DDC776" controls preload="none"><source src="https://video.fbey14-1.fna.fbcdn.net/o1/v/t2/f2/m412/AQOBy84diattEWk_zGHcnS2U0hWLvc_Tj6aDY7eCD0jQ8032lfFSmwGyppC0YYomcu4vMhlhSvKe9XB3C6w4mTpl5FS4LOFpsfFgeuWAYQ.mp4?_nc_cat=109&amp;_nc_oc=AdpUkrzfU3G8AQm-fhk4SIr3g2eTwH8NwzB9XE1jkF8KnUMgeVuxx8MQBq5GTsxHMe8&amp;_nc_sid=8bf8fe&amp;_nc_ht=video.fbey14-1.fna.fbcdn.net&amp;_nc_ohc=ND9Kfts4VAoQ7kNvwHFhn5D&amp;efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6MTE1NzM0MDQ1MjcwNDI3OCwiYXNzZXRfYWdlX2RheXMiOjE0MSwidmlfdXNlY2FzZV9pZCI6MTA3OTksImR1cmF0aW9uX3MiOjQ0LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&amp;ccb=17-1&amp;_nc_gid=CgTC2zNKtaO3FkeumN6VKQ&amp;_nc_ss=7a389&amp;_nc_zt=28&amp;oh=00_Af0F0Z6MitcIseLbIlCvXA6VkXfbEGqUPLU2E0AMymigig&amp;oe=69DDC6D1" type="video/mp4"></video></div><div class="ad-info"><div class="ad-header"><img src="https://scontent.fbey14-1.fna.fbcdn.net/v/t39.35426-6/584927509_2254026165008917_5796913801087820289_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=102&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=wT8_Rp6_510Q7kNvwG0Ni3F&amp;_nc_oc=AdrmMZXAxXgwEuR7bA9NbJfPgW1GO5tVPAmWt04-Gn61qNtUvbonsBlR04oojM53yqg&amp;_nc_zt=14&amp;_nc_ht=scontent.fbey14-1.fna&amp;_nc_gid=CgTC2zNKtaO3FkeumN6VKQ&amp;_nc_ss=7a389&amp;oh=00_Af0DXWjtm9kwSC0uGWEwFOJHMv7LuToXYOb6Oty0KtbiWg&amp;oe=69DDAC67" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/bodyloungeclaudiafachin/" target="_blank" rel="noopener" class="page-name">Body Lounge by Claudia Fachin</a><div class="ad-sub"><span>FB · IG · AN · MS</span><span>desde Nov/2025</span></div></div><a href="https://www.facebook.com/ads/library/?id=2072651613564701" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Você sabe como funciona um treino de eletroestimulação? 🦾⚡️
+
+O equipamento consiste em um colete de neoprene com eletrodos, que, por meio de estímulos elétricos, potencializa a contração muscular.
+
+O treino é baseado em 3 pilares essenciais:
+
+Tecnologia avançada
+Acompanhamento do professor
+Otimização de resultados
+
+Com apenas 20 minutos, você alcança resultados significativos, como aumento do tônus muscular, resistência e emagrecimento.</div></div></div>
+<div class="ad-card"><div class="ad-media"><img src="https://scontent.fbey14-1.fna.fbcdn.net/v/t39.35426-6/638666923_924735530204368_2733129946764759340_n.jpg?stp=dst-jpg_s600x600_tt6&amp;_nc_cat=102&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=6KAI3OrTwqcQ7kNvwEyOCtq&amp;_nc_oc=AdqouoN-KvGXQS1qSy7eeAAK6Oed-3amEWZx2mhyO4bqj02F_iGBTuK_iyM8NT_Pwx4&amp;_nc_zt=14&amp;_nc_ht=scontent.fbey14-1.fna&amp;_nc_gid=CgTC2zNKtaO3FkeumN6VKQ&amp;_nc_ss=7a389&amp;oh=00_Af3atIi5LxuXH9XLqIR6Nqz95iFxw5lXA6xkwpdbtcM0ig&amp;oe=69DDAD6B" alt="Tecfit Brasil" loading="lazy" /></div><div class="ad-info"><div class="ad-header"><img src="https://scontent.fbey14-1.fna.fbcdn.net/v/t39.35426-6/641482941_1665917624850452_5150808962616506281_n.jpg?stp=dst-jpg_s60x60_tt6&amp;_nc_cat=109&amp;ccb=1-7&amp;_nc_sid=c53f8f&amp;_nc_ohc=BpAj_iu6RfoQ7kNvwEl72uZ&amp;_nc_oc=AdpSFr4kAC06J_BkTMxCL3d5NkRakbvVsqJmMg5dRZBsWvvAQ5y_r98J6Keo-mteC2I&amp;_nc_zt=14&amp;_nc_ht=scontent.fbey14-1.fna&amp;_nc_gid=CgTC2zNKtaO3FkeumN6VKQ&amp;_nc_ss=7a389&amp;oh=00_Af2_IhFj_TcHH3r0xki961ULFmbPk95ZHOa_6NWBTjArBQ&amp;oe=69DDD15B" alt="" class="avatar" loading="lazy" /><div class="ad-page-meta"><a href="https://www.facebook.com/Tecfitbrasil/" target="_blank" rel="noopener" class="page-name">Tecfit Brasil</a><div class="ad-sub"><span>FB · IG</span><span>desde Feb/2026</span></div></div><a href="https://www.facebook.com/ads/library/?id=1055141657674112" target="_blank" rel="noopener" class="lib-btn">Ad Library ↗</a></div><div class="ad-body">Já pensou em trabalhar a sua massa magra sem se movimentar? Melhorar a sua celulite, inflamação e muito mais? 
+E a nossa resposta é: você precisa conhecer a Tecfit Beauty, uma novidade aqui na Tecfit! 
+
+Arraste para o lado e confira todas as possibilidades desta nova tecnologia. Agende sua sessão em São Paulo, nas unidades Moema ou Itaim.</div></div></div>
+    </div>
+  </div>
+</section>
 
 <!-- ANUNCIANTES -->
 <section>
   <div class="container">
     <div class="section-label">Panorama</div>
     <h2 class="section-title">Anunciantes ativos no mercado</h2>
-    <p class="section-sub">Competidores diretos e indiretos identificados no Meta Ads com criativos rodando nos últimos 30 a 90 dias.</p>
-
+    <p class="section-sub">Competidores diretos e indiretos identificados com criativos rodando nos últimos 30 a 90 dias.</p>
     <div class="adv-grid">
-
-      <div class="adv-card">
-        <span class="pill pill-high">Alto volume</span>
-        <h3>Jet'z Studio Fitness</h3>
-        <p>4+ criativos ativos. Maior diversidade de copy do mercado. Ângulos: inclusão, lipedema, "é para você também". Forte presença em FB + IG.</p>
-      </div>
-
-      <div class="adv-card">
-        <span class="pill pill-high">Alto volume</span>
-        <h3>BAH Estúdio (RS)</h3>
-        <p>5+ criativos ativos. Melhor copy emocional do segmento. Tom regional gaúcho ("guria"). Foco em quem nunca se encaixou na academia.</p>
-      </div>
-
-      <div class="adv-card">
-        <span class="pill pill-med">Médio volume</span>
-        <h3>ShapeTech Studio EletroFuncional</h3>
-        <p>Posicionamento de multi-tecnologia (EMS + outros). Copy educacional e de resultado. "Futuro do treino" como narrativa.</p>
-      </div>
-
-      <div class="adv-card">
-        <span class="pill pill-med">Médio volume</span>
-        <h3>Ampére EMS — Araraquara</h3>
-        <p>Resultado em 8 semanas como oferta central. Messaging direto e funcional. 2 criativos rodando com a mesma copy.</p>
-      </div>
-
-      <div class="adv-card">
-        <span class="pill pill-med">Médio volume</span>
-        <h3>Em20 Eletroestimulação</h3>
-        <p>Foco no gasto calórico pós-treino (efeito EPOC). Copy técnica e educacional. Diferencial claro de mecanismo de ação.</p>
-      </div>
-
-      <div class="adv-card">
-        <span class="pill pill-med">Médio volume</span>
-        <h3>Ampère São Carlos</h3>
-        <p>Combina EMS + Pilates. Foco em bem-estar, alívio de dores e qualidade de vida. Público com perfil diferente do fitness puro.</p>
-      </div>
-
-      <div class="adv-card">
-        <span class="pill pill-low">Presença ativa</span>
-        <h3>PulseLab Leblon</h3>
-        <p>Posicionamento premium, público AB Rio. "20 min, resultados incríveis, acompanhamento profissional". Exclusividade como diferencial.</p>
-      </div>
-
-      <div class="adv-card">
-        <span class="pill pill-low">Presença ativa</span>
-        <h3>BVFit Wellness</h3>
-        <p>"Não é para todo mundo." Ambiente sofisticado, tecnologia mais avançada do mundo fitness. Nicho de alto ticket.</p>
-      </div>
-
-      <div class="adv-card">
-        <span class="pill pill-low">Presença ativa</span>
-        <h3>Clínica Uirtus</h3>
-        <p>Método Eletro Ellite: 2 treinos por semana, 30 min. Baixa frequência como argumento de venda. Hipertrofia + emagrecimento.</p>
-      </div>
-
-      <div class="adv-card">
-        <span class="pill pill-low">Presença ativa</span>
-        <h3>Estética Cuidare / Ale Barros</h3>
-        <p>Equipamento EZBODY: "40x mais contração". Foco estético — definição, redução de gordura. Público feminino, anti-flacidez.</p>
-      </div>
-
-      <div class="adv-card">
-        <span class="pill pill-low">Presença ativa</span>
-        <h3>Body Lounge by Claudia Fachin</h3>
-        <p>Copy consultiva/informativa. Explica o colete EMS, os 3 pilares (tecnologia, acompanhamento, resultado). Tom educativo.</p>
-      </div>
-
-      <div class="adv-card">
-        <span class="pill pill-low">Presença ativa</span>
-        <h3>Tecfit Brasil</h3>
-        <p>Franquia nacional de EMS. Benchmark de escala e padronização. Referência para o que funciona em múltiplas praças.</p>
-      </div>
-
+      <div class="adv-card"><span class="pill pill-high">Alto volume</span><h3>Jet'z Studio Fitness</h3><p>4+ criativos ativos. Maior diversidade de copy do mercado. Ângulos: inclusão, lipedema, "é para você também". Forte presença em FB + IG.</p></div>
+      <div class="adv-card"><span class="pill pill-high">Alto volume</span><h3>BAH Estúdio (RS)</h3><p>5+ criativos ativos. Melhor copy emocional do segmento. Tom regional gaúcho ("guria"). Foco em quem nunca se encaixou na academia.</p></div>
+      <div class="adv-card"><span class="pill pill-med">Médio volume</span><h3>ShapeTech Studio EletroFuncional</h3><p>Posicionamento de multi-tecnologia (EMS + outros). Copy educacional e de resultado. "Futuro do treino" como narrativa.</p></div>
+      <div class="adv-card"><span class="pill pill-med">Médio volume</span><h3>Ampére EMS — Araraquara</h3><p>Resultado em 8 semanas como oferta central. Messaging direto e funcional. 2 criativos rodando com a mesma copy.</p></div>
+      <div class="adv-card"><span class="pill pill-med">Médio volume</span><h3>Em20 Eletroestimulação</h3><p>Foco no gasto calórico pós-treino (efeito EPOC). Copy técnica e educacional. Diferencial claro de mecanismo de ação.</p></div>
+      <div class="adv-card"><span class="pill pill-med">Médio volume</span><h3>Ampère São Carlos</h3><p>Combina EMS + Pilates. Foco em bem-estar, alívio de dores e qualidade de vida. Público com perfil diferente do fitness puro.</p></div>
+      <div class="adv-card"><span class="pill pill-low">Presença ativa</span><h3>PulseLab Leblon</h3><p>Posicionamento premium, público AB Rio. "20 min, resultados incríveis, acompanhamento profissional". Exclusividade como diferencial.</p></div>
+      <div class="adv-card"><span class="pill pill-low">Presença ativa</span><h3>BVFit Wellness</h3><p>"Não é para todo mundo." Ambiente sofisticado, tecnologia mais avançada do mundo fitness. Nicho de alto ticket.</p></div>
+      <div class="adv-card"><span class="pill pill-low">Presença ativa</span><h3>Clínica Uirtus</h3><p>Método Eletro Ellite: 2 treinos por semana, 30 min. Baixa frequência como argumento de venda. Hipertrofia + emagrecimento.</p></div>
+      <div class="adv-card"><span class="pill pill-low">Presença ativa</span><h3>Estética Cuidare / Ale Barros</h3><p>Equipamento EZBODY: "40x mais contração". Foco estético — definição, redução de gordura. Público feminino, anti-flacidez.</p></div>
+      <div class="adv-card"><span class="pill pill-low">Presença ativa</span><h3>Body Lounge by Claudia Fachin</h3><p>Copy consultiva/informativa. Explica o colete EMS, os 3 pilares (tecnologia, acompanhamento, resultado). Tom educativo.</p></div>
+      <div class="adv-card"><span class="pill pill-low">Presença ativa</span><h3>Tecfit Brasil</h3><p>Franquia nacional de EMS. Benchmark de escala e padronização. Referência para o que funciona em múltiplas praças.</p></div>
     </div>
   </div>
 </section>
 
-<!-- ÂNGULOS DE COPY -->
+<!-- ÂNGULOS -->
 <section>
   <div class="container">
     <div class="section-label">Análise de Copy</div>
     <h2 class="section-title">Ângulos dominantes no mercado</h2>
     <p class="section-sub">Os 6 principais ângulos identificados — com nível de saturação e recomendação estratégica para a Realser.</p>
-
     <div class="angles-list">
-
-      <div class="angle-card">
-        <div class="bar"></div>
-        <div class="angle-body">
-          <div class="angle-header">
-            <div class="angle-title">⏱ O argumento do tempo</div>
-            <span class="sat-tag sat-high">Saturação altíssima</span>
-          </div>
-          <div class="angle-quote">"20 minutos = 2 horas de academia" · "Sem tempo para a academia, mas quer emagrecer?"</div>
-          <p class="angle-insight"><strong>Presente em:</strong> ShapeTech, Imperium, Studio Pulsar, Studio Pro Pulse, PulseLab, Jet'z e mais. <strong>Recomendação:</strong> Evitar como gancho principal. O mercado inteiro compete nesse ângulo — entrar por outro lado e usar o tempo como <em>reforço</em>, não como abertura.</p>
-        </div>
-      </div>
-
-      <div class="angle-card teal">
-        <div class="bar"></div>
-        <div class="angle-body">
-          <div class="angle-header">
-            <div class="angle-title">💛 Anti-academia / "o problema não era você"</div>
-            <span class="sat-tag sat-med">Saturação média</span>
-          </div>
-          <div class="angle-quote">"Se você nunca se encaixou em academias convencionais… a verdade é que o problema não é você. É o método!"</div>
-          <p class="angle-insight"><strong>Presente em:</strong> BAH Estúdio (mais desenvolvido), Jet'z. <strong>Recomendação:</strong> <strong>Alto potencial para a Realser.</strong> Copy altamente identificadora com o público feminino 25–55 que desistiu de academia. Gera reconhecimento imediato.</p>
-        </div>
-      </div>
-
-      <div class="angle-card">
-        <div class="bar"></div>
-        <div class="angle-body">
-          <div class="angle-header">
-            <div class="angle-title">🔬 Ciência / mecanismo de ação</div>
-            <span class="sat-tag sat-med">Saturação média</span>
-          </div>
-          <div class="angle-quote">"O gasto calórico do EMS não acontece só durante a sessão. O principal impacto vem depois, quando o corpo entra em processo de recuperação..."</div>
-          <p class="angle-insight"><strong>Presente em:</strong> Em20, Wiemspro, Estética Cuidare, ShapeTech. <strong>Recomendação:</strong> Excelente para retargeting — audiência quente já sabe o que é EMS e precisa do "porquê funciona". Também funciona como gancho de curiosidade para público frio.</p>
-        </div>
-      </div>
-
-      <div class="angle-card teal">
-        <div class="bar"></div>
-        <div class="angle-body">
-          <div class="angle-header">
-            <div class="angle-title">🦵 Nicho de dor — lipedema e articulações</div>
-            <span class="sat-tag sat-low">Saturação baixa — oportunidade</span>
-          </div>
-          <div class="angle-quote">"Lipedema &amp; EMS: uma nova aliada no tratamento. Ativa a circulação e a drenagem linfática. Reduz o inchaço e a retenção de líquidos."</div>
-          <p class="angle-insight"><strong>Presente em:</strong> Jet'z (lipedema), Ampère São Carlos (dores). <strong>Recomendação:</strong> <strong>Maior oportunidade identificada.</strong> Alta demanda reprimida, CPL potencialmente baixo por ser nicho específico. Alinha EMS com necessidade real de saúde — não só estética.</p>
-        </div>
-      </div>
-
-      <div class="angle-card dark">
-        <div class="bar"></div>
-        <div class="angle-body">
-          <div class="angle-header">
-            <div class="angle-title">💎 Exclusividade / premium</div>
-            <span class="sat-tag sat-low">Saturação baixa</span>
-          </div>
-          <div class="angle-quote">"A BVFit não é para todo mundo. É para você, que busca um atendimento exclusivo, um ambiente sofisticado e a tecnologia mais avançada do mundo fitness."</div>
-          <p class="angle-insight"><strong>Presente em:</strong> BVFit, PulseLab. <strong>Recomendação:</strong> Funciona bem para público A/B. A Realser pode explorar esse ângulo com a combinação "avaliação personalizada gratuita + equipe especializada + tecnologia i-Motion" como elementos de premium local.</p>
-        </div>
-      </div>
-
-      <div class="angle-card">
-        <div class="bar"></div>
-        <div class="angle-body">
-          <div class="angle-header">
-            <div class="angle-title">✅ Inclusão / "é para você também"</div>
-            <span class="sat-tag sat-med">Saturação média</span>
-          </div>
-          <div class="angle-quote">"Eletroestimulação é para VOCÊ! Sabe aquela desculpa de que 'esse treino não é pra mim'? Pode esquecer."</div>
-          <p class="angle-insight"><strong>Presente em:</strong> Jet'z, BAH Estúdio. <strong>Recomendação:</strong> Ângulo emocional com alto potencial de identificação. Ideal para quebrar objeção de quem acha que EMS "não é para mim". Funciona bem como vídeo curto com depoimento.</p>
-        </div>
-      </div>
-
+      <div class="angle-card"><div class="bar"></div><div class="angle-body"><div class="angle-header"><div class="angle-title">⏱ O argumento do tempo</div><span class="sat-tag sat-high">Saturação altíssima</span></div><div class="angle-quote">"20 minutos = 2 horas de academia" · "Sem tempo para a academia, mas quer emagrecer?"</div><p class="angle-insight"><strong>Presente em:</strong> ShapeTech, Imperium, Studio Pulsar, PulseLab, Jet'z e mais. <strong>Recomendação:</strong> Evitar como gancho principal — o mercado inteiro compete nesse ângulo. Usar como reforço, não como abertura.</p></div></div>
+      <div class="angle-card teal"><div class="bar"></div><div class="angle-body"><div class="angle-header"><div class="angle-title">💛 Anti-academia / "o problema não era você"</div><span class="sat-tag sat-med">Saturação média</span></div><div class="angle-quote">"Se você nunca se encaixou em academias convencionais… a verdade é que o problema não é você. É o método!"</div><p class="angle-insight"><strong>Presente em:</strong> BAH Estúdio, Jet'z. <strong>Recomendação:</strong> <strong>Alto potencial para a Realser.</strong> Copy altamente identificadora com o público feminino 25–55 que desistiu de academia.</p></div></div>
+      <div class="angle-card"><div class="bar"></div><div class="angle-body"><div class="angle-header"><div class="angle-title">🔬 Ciência / mecanismo de ação</div><span class="sat-tag sat-med">Saturação média</span></div><div class="angle-quote">"O gasto calórico do EMS não acontece só durante a sessão. O principal impacto vem depois, quando o corpo entra em processo de recuperação..."</div><p class="angle-insight"><strong>Presente em:</strong> Em20, Wiemspro, Estética Cuidare, ShapeTech. <strong>Recomendação:</strong> Excelente para retargeting — audiência quente precisa do "porquê funciona".</p></div></div>
+      <div class="angle-card teal"><div class="bar"></div><div class="angle-body"><div class="angle-header"><div class="angle-title">🦵 Nicho de dor — lipedema e articulações</div><span class="sat-tag sat-low">Saturação baixa — oportunidade</span></div><div class="angle-quote">"Lipedema &amp; EMS: uma nova aliada no tratamento. Ativa a circulação e a drenagem linfática. Reduz o inchaço."</div><p class="angle-insight"><strong>Presente em:</strong> Jet'z (lipedema), Ampère São Carlos (dores). <strong>Recomendação:</strong> <strong>Maior oportunidade identificada.</strong> Alta demanda reprimida, CPL potencialmente baixo por ser nicho específico.</p></div></div>
+      <div class="angle-card dark"><div class="bar"></div><div class="angle-body"><div class="angle-header"><div class="angle-title">💎 Exclusividade / premium</div><span class="sat-tag sat-low">Saturação baixa</span></div><div class="angle-quote">"A BVFit não é para todo mundo. É para você, que busca um atendimento exclusivo e a tecnologia mais avançada do mundo fitness."</div><p class="angle-insight"><strong>Presente em:</strong> BVFit, PulseLab. <strong>Recomendação:</strong> Funciona para público A/B. Realser pode explorar com "avaliação personalizada + equipe especializada + i-Motion" como premium local.</p></div></div>
+      <div class="angle-card"><div class="bar"></div><div class="angle-body"><div class="angle-header"><div class="angle-title">✅ Inclusão / "é para você também"</div><span class="sat-tag sat-med">Saturação média</span></div><div class="angle-quote">"Eletroestimulação é para VOCÊ! Sabe aquela desculpa de que 'esse treino não é pra mim'? Pode esquecer."</div><p class="angle-insight"><strong>Presente em:</strong> Jet'z, BAH Estúdio. <strong>Recomendação:</strong> Ângulo emocional com alto potencial de identificação. Ideal para quebrar objeção de quem acha que EMS "não é para mim".</p></div></div>
     </div>
   </div>
 </section>
@@ -647,42 +551,15 @@
     <div class="section-label">Estrutura de Ofertas</div>
     <h2 class="section-title">Como o mercado estrutura suas ofertas</h2>
     <p class="section-sub">Padrões de CTA, formato de proposta de valor e uso de preço nos criativos analisados.</p>
-
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th>Tipo de oferta</th>
-            <th>Frequência no mercado</th>
-            <th>Exemplo identificado</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Tipo de oferta</th><th>Frequência no mercado</th><th>Exemplo identificado</th></tr></thead>
         <tbody>
-          <tr>
-            <td><span class="dot dot-orange"></span><strong>Sessão experimental / avaliação grátis</strong></td>
-            <td><span class="dot dot-orange"></span>Alta — padrão do segmento</td>
-            <td>"Agende sua primeira sessão agora"</td>
-          </tr>
-          <tr>
-            <td><span class="dot dot-orange"></span><strong>Resultado com prazo definido</strong></td>
-            <td><span class="dot dot-orange"></span>Média — usado por Ampére, Uirtus</td>
-            <td>"Conquiste mudanças reais em até 8 semanas"</td>
-          </tr>
-          <tr>
-            <td><span class="dot dot-teal"></span><strong>Combo de tecnologias</strong></td>
-            <td><span class="dot dot-teal"></span>Média — ShapeTech, Ampère SP, House Slim</td>
-            <td>EMS + Pilates, EMS + Infravermelho + Vácuo</td>
-          </tr>
-          <tr>
-            <td><span class="dot dot-teal"></span><strong>Baixa frequência como benefício</strong></td>
-            <td><span class="dot dot-teal"></span>Baixa — Clínica Uirtus</td>
-            <td>"Só 2x por semana de 30 minutos"</td>
-          </tr>
-          <tr>
-            <td><span class="dot dot-gray"></span><strong>Preço visível no criativo</strong></td>
-            <td><span class="dot dot-gray"></span>Muito rara — quase inexistente</td>
-            <td>Mercado evita preço nos criativos de topo</td>
-          </tr>
+          <tr><td><span class="dot dot-orange"></span><strong>Sessão experimental / avaliação grátis</strong></td><td>Alta — padrão do segmento</td><td>"Agende sua primeira sessão agora"</td></tr>
+          <tr><td><span class="dot dot-orange"></span><strong>Resultado com prazo definido</strong></td><td>Média — Ampére, Uirtus</td><td>"Conquiste mudanças reais em até 8 semanas"</td></tr>
+          <tr><td><span class="dot dot-teal"></span><strong>Combo de tecnologias</strong></td><td>Média — ShapeTech, Ampère SP</td><td>EMS + Pilates, EMS + Infravermelho + Vácuo</td></tr>
+          <tr><td><span class="dot dot-teal"></span><strong>Baixa frequência como benefício</strong></td><td>Baixa — Clínica Uirtus</td><td>"Só 2x por semana de 30 minutos"</td></tr>
+          <tr><td><span class="dot dot-gray"></span><strong>Preço visível no criativo</strong></td><td>Muito rara — quase inexistente</td><td>Mercado evita preço nos criativos de topo</td></tr>
         </tbody>
       </table>
     </div>
@@ -695,85 +572,37 @@
     <div class="section-label">Recomendações</div>
     <h2 class="section-title">4 criativos para testar em Indaiatuba</h2>
     <p class="section-sub">Baseados nos gaps identificados na análise. Cada criativo parte de um ângulo diferente para testar qual ressoa melhor com a audiência local.</p>
-
     <div class="opp-grid">
-
-      <div class="opp-card" data-letter="A">
-        <h3>Criativo A · Anti-academia</h3>
-        <div class="hook">"Se você já desistiu de academia… talvez nunca tenha encontrado o método certo."</div>
-        <p>Body: explica que 20 min de EMS ativa mais que 2h convencional. Sem impacto, sem desculpa de cansaço pós-trabalho.</p>
-        <span class="cta-tag">CTA: Avaliação grátis</span>
-      </div>
-
-      <div class="opp-card" data-letter="B">
-        <h3>Criativo B · Nicho lipedema</h3>
-        <div class="hook">"Você tem lipedema ou dores nos joelhos e quer se exercitar sem agravar?"</div>
-        <p>Body: EMS sem impacto articular, protege as articulações, melhora circulação linfática. Validado por fisioterapeutas.</p>
-        <span class="cta-tag">CTA: Avaliação com especialista</span>
-      </div>
-
-      <div class="opp-card" data-letter="C">
-        <h3>Criativo C · Científico / EPOC</h3>
-        <div class="hook">"Você sabia que a queima do EMS continua DEPOIS do treino?"</div>
-        <p>Body: explica efeito EPOC, recuperação muscular ativa, metabolismo elevado por horas. Gancho de curiosidade para topo.</p>
-        <span class="cta-tag">CTA: Experimente na prática</span>
-      </div>
-
-      <div class="opp-card" data-letter="D">
-        <h3>Criativo D · Exclusividade local</h3>
-        <div class="hook">"Em Indaiatuba, a tecnologia que atletas de elite usam agora está ao seu alcance."</div>
-        <p>Body: i-Motion EMS, método validado internacionalmente, equipe especializada. Vagas limitadas para avaliação.</p>
-        <span class="cta-tag">CTA: Vagas limitadas</span>
-      </div>
-
+      <div class="opp-card" data-letter="A"><h3>Criativo A · Anti-academia</h3><div class="hook">"Se você já desistiu de academia… talvez nunca tenha encontrado o método certo."</div><p>Body: explica que 20 min de EMS ativa mais que 2h convencional. Sem impacto, sem desculpa de cansaço pós-trabalho.</p><span class="cta-tag">CTA: Avaliação grátis</span></div>
+      <div class="opp-card" data-letter="B"><h3>Criativo B · Nicho lipedema</h3><div class="hook">"Você tem lipedema ou dores nos joelhos e quer se exercitar sem agravar?"</div><p>Body: EMS sem impacto articular, protege articulações, melhora circulação linfática. Validado por fisioterapeutas.</p><span class="cta-tag">CTA: Avaliação com especialista</span></div>
+      <div class="opp-card" data-letter="C"><h3>Criativo C · Científico / EPOC</h3><div class="hook">"Você sabia que a queima do EMS continua DEPOIS do treino?"</div><p>Body: efeito EPOC, recuperação muscular ativa, metabolismo elevado por horas. Gancho de curiosidade para topo de funil.</p><span class="cta-tag">CTA: Experimente na prática</span></div>
+      <div class="opp-card" data-letter="D"><h3>Criativo D · Exclusividade local</h3><div class="hook">"Em Indaiatuba, a tecnologia que atletas de elite usam agora está ao seu alcance."</div><p>Body: i-Motion EMS, método validado internacionalmente, equipe especializada. Vagas limitadas para avaliação.</p><span class="cta-tag">CTA: Vagas limitadas</span></div>
     </div>
   </div>
 </section>
 
-<!-- CONCORRENTES A MONITORAR -->
+<!-- CONCORRENTES -->
 <section>
   <div class="container">
     <div class="section-label">Monitoramento</div>
     <h2 class="section-title">Concorrentes prioritários para acompanhar</h2>
-    <p class="section-sub">Páginas que apresentam copy mais desenvolvida ou volume de teste relevante — vale observar evolução dos criativos.</p>
-
+    <p class="section-sub">Páginas que apresentam copy mais desenvolvida ou volume de teste relevante.</p>
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th>Anunciante</th>
-            <th>Motivo para monitorar</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Anunciante</th><th>Motivo para monitorar</th></tr></thead>
         <tbody>
-          <tr>
-            <td><strong>Jet'z Studio Fitness</strong></td>
-            <td>Maior volume de criativos, copy mais testada e variada do segmento</td>
-          </tr>
-          <tr>
-            <td><strong>BAH Estúdio</strong></td>
-            <td>Melhor copy emocional do mercado EMS — referência de tom e identificação</td>
-          </tr>
-          <tr>
-            <td><strong>Em20 Eletroestimulação</strong></td>
-            <td>Educação científica como diferencial — único a explorar mecanismo EPOC</td>
-          </tr>
-          <tr>
-            <td><strong>Ampére EMS — Araraquara</strong></td>
-            <td>Mesmo segmento regional interior SP, messaging de resultado com prazo</td>
-          </tr>
-          <tr>
-            <td><strong>Tecfit Brasil</strong></td>
-            <td>Franquia nacional — benchmark de escala, o que funciona em múltiplas praças</td>
-          </tr>
+          <tr><td><strong>Jet'z Studio Fitness</strong></td><td>Maior volume de criativos, copy mais testada e variada do segmento</td></tr>
+          <tr><td><strong>BAH Estúdio</strong></td><td>Melhor copy emocional do mercado EMS — referência de tom e identificação</td></tr>
+          <tr><td><strong>Em20 Eletroestimulação</strong></td><td>Educação científica como diferencial — único a explorar mecanismo EPOC</td></tr>
+          <tr><td><strong>Ampére EMS — Araraquara</strong></td><td>Mesmo segmento regional interior SP, messaging de resultado com prazo</td></tr>
+          <tr><td><strong>Tecfit Brasil</strong></td><td>Franquia nacional — benchmark de escala e o que funciona em múltiplas praças</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 </section>
 
-<!-- KEY INSIGHT -->
-<section style="background: var(--white); padding: 3rem 0;">
+<section style="background:var(--white);padding:3rem 0">
   <div class="container">
     <div class="insight-box">
       <h2>O maior insight desta análise</h2>
@@ -782,10 +611,8 @@
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
-  <p>Análise de inteligência de mercado — <strong>Realser · Indaiatuba</strong> · Meta Ad Library via Apify · Abril 2026<br>
-  Dados coletados em 09/04/2026. Criativos ativos sujeitos a alteração.</p>
+  <p>Análise de inteligência de mercado — <strong>Realser · Indaiatuba</strong> · Meta Ad Library via Apify · Abril 2026<br>Dados coletados em 09/04/2026. Criativos ativos sujeito a alteração.</p>
 </footer>
 
 </body>
